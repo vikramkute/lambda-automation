@@ -1,0 +1,2 @@
+# Add your Lambda function dependencies here
+boto3>=1.26.0

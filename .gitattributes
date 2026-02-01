@@ -1,0 +1,22 @@
+# Set default behavior to automatically normalize line endings
+* text=auto
+
+# Force batch scripts to have CRLF line endings on checkout
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Force shell scripts to have LF line endings on checkout
+*.sh text eol=lf
+
+# Ensure these files are always treated as text and normalized
+*.py text
+*.yml text
+*.yaml text
+*.md text
+*.txt text
+*.json text
+
+# Ensure these files are treated as binary
+*.zip binary
+*.tar.gz binary
+*.exe binary

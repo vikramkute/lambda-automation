@@ -1,0 +1,58 @@
+# AWS Lambda Functions Configuration
+# This config file is used to manage and automate Lambda function upgrades,
+# testing, and deployment. Add new functions here to automatically include them.
+
+functions:
+  - name: myTestFunction1
+    path: ./myTestFunction1
+    runtime: python3.14  # Latest supported Python runtime
+    description: "Test function 1 - S3 read operations testing"
+    enabled: true
+    memory: 130
+    timeout: 31
+
+  - name: myTestFunction2
+    path: ./myTestFunction2
+    runtime: python3.14
+    description: "Test function 2"
+    enabled: true
+    memory: 128
+    timeout: 30
+
+  - name: myTestFunction3
+    path: ./myTestFunction3
+    runtime: python3.14
+    description: "Test function 3"
+    enabled: true
+    memory: 128
+    timeout: 30
+
+  - name: myTestFunction4
+    path: ./myTestFunction4
+    runtime: python3.14
+    description: "Test function 4"
+    enabled: false
+    memory: 128
+    timeout: 30
+
+  - name: myTestFunction5
+    path: ./myTestFunction5
+    runtime: python3.14
+    description: "Test function 5"
+    enabled: false
+    memory: 128
+    timeout: 30
+
+# Global settings
+global:
+  aws_region: "us-east-1"  # Default AWS region for deployments
+  deployment_bucket: "lambda-deployments"
+  test_timeout: 60
+  local_testing_port: 3001
+  architecture: "x86_64"
+
+# Build settings
+build:
+  artifact_dir: ".build"
+  package_dir: ".packages"
+  test_dir: "tests"
