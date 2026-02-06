@@ -6,9 +6,9 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./src
-      Description: ''
+      Description: 'Test function 2'
       MemorySize: 128
-      Timeout: 3
+      Timeout: 30
       Handler: lambda_function.lambda_handler
       Runtime: python3.14
       Architectures:

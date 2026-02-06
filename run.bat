@@ -20,6 +20,8 @@ if "%1"=="" (
     echo   run.bat test                  - Run tests
     echo   run.bat test-fast             - Quick tests
     echo   run.bat build                 - Build functions
+    echo   run.bat compare [func1] [func2] - Compare two Lambda functions
+    echo   run.bat compare-config        - Compare functions from comparison.config.yaml
     echo   run.bat init-terraform        - Initialize Terraform
     echo   run.bat create-log-groups     - Create CloudWatch log groups
     echo   run.bat terraform-output      - Show Terraform outputs
@@ -34,10 +36,14 @@ if "%1"=="" (
     exit /b 0
 )
 
-REM Run PowerShell script with the command and optional second parameter
-if "%2"=="" (
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "& '.\run.ps1' -Command '%1' -ScriptName 'run.bat'"
+REM Run PowerShell script with the command and optional parameters
+if "%3"=="" (
+    if "%2"=="" (
+        powershell -NoProfile -ExecutionPolicy Bypass -Command "& '.\run.ps1' -Command '%1' -ScriptName 'run.bat'"
+    ) else (
+        powershell -NoProfile -ExecutionPolicy Bypass -Command "& '.\run.ps1' -Command '%1' -FunctionList '%2' -ScriptName 'run.bat'"
+    )
 ) else (
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "& '.\run.ps1' -Command '%1' -FunctionList '%2' -ScriptName 'run.bat'"
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "& '.\run.ps1' -Command '%1' -FunctionList '%2' -Function2 '%3' -ScriptName 'run.bat'"
 )
 exit /b %ERRORLEVEL%

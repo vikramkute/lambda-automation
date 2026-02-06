@@ -8,6 +8,8 @@ param(
     [Parameter(Position = 1)]
     [string]$FunctionList,
     [Parameter(Position = 2)]
+    [string]$Function2,
+    [Parameter(Position = 3)]
     [string]$ScriptName = ".\run.ps1"
 )
 
@@ -107,6 +109,8 @@ function Show-Help {
     Write-Host "  check-runtime-version  Check runtime versions of all functions"
     Write-Host "  upgrade                Upgrade all Lambda functions to latest Python version"
     Write-Host "  build                  Build all Lambda functions"
+    Write-Host "  compare [func1] [func2] Compare two Lambda functions"
+    Write-Host "  compare-config         Compare functions from comparison.config.yaml"
     Write-Host "  test                   Run full test suite with SAM"
     Write-Host "  test-fast              Run fast test suite (no SAM build)"
     Write-Host "  init-terraform         Initialize Terraform"
@@ -123,6 +127,8 @@ function Show-Help {
     Write-Host "  $ScriptName setup"
     Write-Host "  $ScriptName validate-config"
     Write-Host "  $ScriptName upgrade"
+    Write-Host "  $ScriptName compare myTestFunction1 myTestFunction2"
+    Write-Host "  $ScriptName compare-config"
     Write-Host "  $ScriptName test"
     Write-Host "  $ScriptName deploy"
     Write-Host ""
@@ -376,6 +382,54 @@ function Cmd-DeleteFunction {
     }
 }
 
+# Cmd-Compare: Compare two Lambda functions
+function Cmd-Compare {
+    param([string]$Func1, [string]$Func2)
+    
+    if (-not $Func1 -or -not $Func2) {
+        Write-ColorOutput "ERROR: Two function names required. Usage: compare <function1> <function2>" "Red"
+        exit 1
+    }
+    
+    Write-ColorOutput "Comparing $Func1 vs $Func2..." "Blue"
+    
+    if (-not (Test-Path "compare_lambda_functions.py")) {
+        Write-ColorOutput "ERROR: compare_lambda_functions.py not found!" "Red"
+        exit 1
+    }
+    
+    & $PYTHON compare_lambda_functions.py $Func1 $Func2
+    if ($LASTEXITCODE -ne 0) {
+        Write-ColorOutput "Comparison failed!" "Red"
+        exit 1
+    }
+    
+    Write-ColorOutput "[OK] Comparison complete" "Green"
+}
+
+# Cmd-CompareConfig: Compare functions from config file
+function Cmd-CompareConfig {
+    Write-ColorOutput "Comparing functions from comparison.config.yaml..." "Blue"
+    
+    if (-not (Test-Path "compare_lambda_functions.py")) {
+        Write-ColorOutput "ERROR: compare_lambda_functions.py not found!" "Red"
+        exit 1
+    }
+    
+    if (-not (Test-Path "comparison.config.yaml")) {
+        Write-ColorOutput "ERROR: comparison.config.yaml not found!" "Red"
+        exit 1
+    }
+    
+    & $PYTHON compare_lambda_functions.py comparison.config.yaml
+    if ($LASTEXITCODE -ne 0) {
+        Write-ColorOutput "Comparison failed!" "Red"
+        exit 1
+    }
+    
+    Write-ColorOutput "[OK] All comparisons complete" "Green"
+}
+
 # Cmd-Deploy: Deploy Lambda functions
 function Cmd-Deploy {
     Write-ColorOutput "Deploying Lambda functions..." "Blue"
@@ -437,6 +491,8 @@ switch ($Command.ToLower()) {
     "check-runtime-version" { Cmd-CheckRuntimeVersion }
     "upgrade" { Cmd-Upgrade }
     "build" { Cmd-Build }
+    "compare" { Cmd-Compare $FunctionList $Function2 }
+    "compare-config" { Cmd-CompareConfig }
     "test" { Cmd-Test }
     "test-fast" { Cmd-TestFast }
     "init-terraform" { Cmd-InitTerraform }

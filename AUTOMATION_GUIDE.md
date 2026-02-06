@@ -301,6 +301,13 @@ terraform output lambda_function_names
 | `terraform-output` | Show Terraform outputs |
 | `full-pipeline` | Execute complete pipeline |
 
+### Comparison
+
+| Command | Description |
+|---------|-------------|
+| `compare` | Compare two Lambda functions |
+| `compare-config` | Compare multiple function pairs from config |
+
 ## Workflow Examples
 
 ### Development Iteration
@@ -341,6 +348,22 @@ make test
 make package
 make deploy
 # or Windows equivalent with run.bat
+```
+
+### Compare Functions
+
+```bash
+# Compare two functions
+make compare FUNC1=myTestFunction1 FUNC2=myTestFunction2
+# or: run.bat compare myTestFunction1 myTestFunction2 (Windows)
+
+# Compare from configuration file
+make compare-config
+# or: run.bat compare-config (Windows)
+
+# Direct Python usage
+python compare_lambda_functions.py myTestFunction1 myTestFunction2
+python compare_lambda_functions.py comparison.config.yaml
 ```
 
 ## Best Practices

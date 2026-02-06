@@ -17,3 +17,4 @@ python-terraform==0.10.1  # Terraform Python wrapper for automation
 
 # Utilities
 python-dotenv==1.0.0
+reportlab==4.0.7  # PDF generation for comparison reports

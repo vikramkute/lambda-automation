@@ -3,12 +3,12 @@ import json
 import os
 
 # Initialize the S3 client
-s3_client = boto3.client('s3', region_name='us-east-1')
+s3_client = boto3.client('s3', region_name='us-east-2')
 
 def lambda_handler(event, context):
     # Get bucket name from environment variable or use a simple default
     bucket_name = os.environ.get('S3_BUCKET_NAME', 'mytestaccesspoint-eofhh939oq6rwhiwq1fbszumm8n5euse1a-s3alias')
-    file_key = "sample.txt" 
+    file_key = "sample1.txt" 
 
     try:
         # Get the object from S3

@@ -1,0 +1,12 @@
+# Lambda Function Comparison Configuration
+# Define pairs of Lambda functions to compare
+
+comparisons:
+  - function1: myTestFunction1
+    function2: myTestFunction2
+  
+  - function1: myTestFunction3
+    function2: myTestFunction4
+
+  - function1: myTestFunction1
+    function2: myTestFunction5

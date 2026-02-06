@@ -135,3 +135,6 @@ local.*.yaml
 # Lambda deployment packages
 deployment-package.zip
 lambda-deployment-*.zip
+
+# Comparison reports
+comparisons/

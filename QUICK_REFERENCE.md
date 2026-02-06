@@ -104,6 +104,20 @@ make clean                    # or: run.bat clean
 make destroy-infra            # or: run.bat destroy-infra
 ```
 
+### Comparison
+```bash
+# Compare two functions
+make compare FUNC1=myTestFunction1 FUNC2=myTestFunction2  # or: run.bat compare myTestFunction1 myTestFunction2
+
+# Compare from config file
+make compare-config           # or: run.bat compare-config
+
+# Direct Python usage
+python compare_lambda_functions.py myTestFunction1 myTestFunction2
+python compare_lambda_functions.py comparison.config.yaml
+python compare_lambda_functions.py func1 func2 --no-pdf
+```
+
 ---
 
 ## Configuration Quick Edit
@@ -158,14 +172,17 @@ make deploy             # Deploy
 | File | Purpose |
 |------|---------|
 | `functions.config.yaml` | Master config (edit this for functions) |
+| `comparison.config.yaml` | Function comparison pairs configuration |
 | `upgrade_lambda_runtime.py` | Upgrade runtime versions |
 | `deploy_lambda_functions.py` | Complete deployment pipeline |
 | `check_runtime_versions.py` | Check runtime versions |
+| `compare_lambda_functions.py` | Compare Lambda functions side-by-side |
 | `tests/test_lambda_functions.py` | Test suite |
 | `terraform.tf` | Terraform setup |
 | `terraform_lambda.tf` | Lambda infrastructure |
 | `Makefile` | All automation commands |
 | `run.bat` / `run.ps1` | Windows automation scripts |
+| `comparisons/` | Generated comparison reports (TXT & PDF) |
 
 ---
 

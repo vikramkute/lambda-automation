@@ -46,6 +46,12 @@ make <command>
 | `deploy` | Complete pipeline: test → build → deploy |
 | `destroy-infra` | Destroy all AWS resources |
 
+### Comparison
+| Command | Description |
+|---------|-------------|
+| `compare` | Compare two Lambda functions (usage: `run.bat compare func1 func2`) |
+| `compare-config` | Compare multiple function pairs from comparison.config.yaml |
+
 ### Maintenance
 | Command | Description |
 |---------|-------------|
@@ -112,6 +118,11 @@ python deploy_lambda_functions.py
 
 # Check runtime versions
 python check_runtime_versions.py
+
+# Compare functions
+python compare_lambda_functions.py func1 func2
+python compare_lambda_functions.py comparison.config.yaml
+python compare_lambda_functions.py func1 func2 --no-pdf
 ```
 
 ### Terraform Commands
@@ -247,6 +258,17 @@ export SKIP_SAM_TESTS=true     # macOS/Linux
 6. run.bat deploy
 ```
 
+### Comparing Functions
+```bash
+# Compare two functions directly
+run.bat compare myTestFunction1 myTestFunction2
+
+# Compare multiple pairs from config
+run.bat compare-config
+
+# Compare without PDF generation
+python compare_lambda_functions.py myTestFunction1 myTestFunction2 --no-pdf
+```
 
 ### Troubleshooting
 ```bash

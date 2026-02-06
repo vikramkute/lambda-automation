@@ -126,6 +126,8 @@ build:
 | Build | `run.bat build` | `make build` | Build functions with SAM |
 | Test | `run.bat test-fast` | `make test-fast` | Quick tests (no SAM) |
 | Test Full | `run.bat test` | `make test` | Full test suite |
+| Compare | `run.bat compare func1 func2` | `make compare FUNC1=func1 FUNC2=func2` | Compare two functions |
+| Compare Config | `run.bat compare-config` | `make compare-config` | Compare from config file |
 | Init Terraform | `run.bat init-terraform` | `make init-terraform` | Initialize Terraform |
 | Terraform Output | `run.bat terraform-output` | `make terraform-output` | Show Terraform outputs |
 | Plan | `run.bat plan-deploy` | `make plan-deploy` | Generate tfvars.json and plan Terraform changes |
@@ -179,6 +181,21 @@ run.bat upgrade && run.bat test && run.bat deploy
 make upgrade && make test && make deploy
 ```
 
+**Function Comparison:**
+```bash
+# Windows - Compare two functions
+run.bat compare myTestFunction1 myTestFunction2
+
+# Windows - Compare from config
+run.bat compare-config
+
+# macOS/Linux - Compare two functions
+make compare FUNC1=myTestFunction1 FUNC2=myTestFunction2
+
+# macOS/Linux - Compare from config
+make compare-config
+```
+
 ## 🐛 Troubleshooting
 
 - **Missing dependencies:** Run `run.bat setup` or `make setup`
@@ -199,4 +216,4 @@ All functions use Python 3.14 runtime with 128MB memory and 30s timeout.
 
 ---
 
-**📚 Documentation:** [SETUP.md](SETUP.md) • [REFERENCE.md](REFERENCE.md) • [AUTOMATION_GUIDE.md](AUTOMATION_GUIDE.md)
+**📚 Documentation:** [SETUP.md](SETUP.md) • [REFERENCE.md](REFERENCE.md) • [AUTOMATION_GUIDE.md](AUTOMATION_GUIDE.md) • [COMPARISON_GUIDE.md](COMPARISON_GUIDE.md)
