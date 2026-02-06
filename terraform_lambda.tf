@@ -13,6 +13,12 @@ variable "lambda_functions" {
     timeout         = number
     environment     = optional(map(string))
     description     = optional(string)
+    s3_trigger      = optional(object({
+      bucket        = string
+      events        = list(string)
+      filter_prefix = optional(string)
+      filter_suffix = optional(string)
+    }))
   }))
   default = {}
 }
@@ -71,6 +77,39 @@ resource "aws_lambda_function" "functions" {
       TimeoutSeconds  = each.value.timeout
     }
   )
+}
+
+# S3 bucket notification for Lambda triggers
+resource "aws_s3_bucket_notification" "lambda_trigger" {
+  for_each = {
+    for name, config in local.function_list :
+    name => config if config.s3_trigger != null
+  }
+
+  bucket = each.value.s3_trigger.bucket
+
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.functions[each.key].arn
+    events              = each.value.s3_trigger.events
+    filter_prefix       = each.value.s3_trigger.filter_prefix
+    filter_suffix       = each.value.s3_trigger.filter_suffix
+  }
+
+  depends_on = [aws_lambda_permission.allow_s3]
+}
+
+# Lambda permission for S3 to invoke the function
+resource "aws_lambda_permission" "allow_s3" {
+  for_each = {
+    for name, config in local.function_list :
+    name => config if config.s3_trigger != null
+  }
+
+  statement_id  = "AllowS3Invoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.functions[each.key].function_name
+  principal     = "s3.amazonaws.com"
+  source_arn    = "arn:aws:s3:::${each.value.s3_trigger.bucket}"
 }
 
 # Outputs

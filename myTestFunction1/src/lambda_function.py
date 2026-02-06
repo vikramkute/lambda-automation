@@ -1,28 +1,47 @@
 import boto3
+import urllib.parse
 import json
 import os
 
-# Initialize the S3 client
-s3_client = boto3.client('s3', region_name='us-east-1')
+print('Loading function')
+
+s3 = boto3.client('s3')
 
 def lambda_handler(event, context):
-    # Get bucket name from environment variable or use a simple default
-    bucket_name = os.environ.get('S3_BUCKET_NAME', 'mytestaccesspoint-eofhh939oq6rwhiwq1fbszumm8n5euse1a-s3alias')
-    file_key = "sample.txt" 
-
     try:
-        # Get the object from S3
-        response = s3_client.get_object(Bucket=bucket_name, Key=file_key)
+        source_bucket = event['Records'][0]['s3']['bucket']['name']
+        file_key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'])
+    except (KeyError, IndexError, TypeError) as e:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': 'Invalid event structure', 'details': str(e)})
+        }
+    
+    destination_bucket = os.environ.get('S3_DESTINATION_BUCKET_NAME', 'mybucket3accesspoint-znfe5kdypno5qb9wyxo5iexhikrjause1a-s3alias')
+    
+    try:
+        # 1. Read the file from the source S3 bucket
+        response = s3.get_object(Bucket=source_bucket, Key=file_key)
+        try:
+            original_content = response['Body'].read().decode('utf-8')
+        except UnicodeDecodeError:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'error': 'File is not UTF-8 encoded or is binary'})
+            }
+        print(f"Read file {file_key} from bucket {source_bucket}")
         
-        # Read the file content from the response body
-        file_content = response['Body'].read().decode('utf-8')
-        print(f"File content: {file_content}") # Logs to CloudWatch
-
+        # 2. Transform the file content (example: convert to uppercase)
+        transformed_content = original_content.upper()
+        
+        # 3. Save the transformed file into the destination S3 bucket
+        s3.put_object(Bucket=destination_bucket, Key=file_key, Body=transformed_content)
+        print(f"Saved transformed file {file_key} to destination bucket {destination_bucket}")
+        
         return {
             'statusCode': 200,
             'body': json.dumps({
-                'message': f'Successfully read {file_key} from S3',
-                'content': file_content
+                'message': f'{file_key} processed and saved to destination bucket successfully!'
             })
         }
     except Exception as e:
@@ -31,9 +50,9 @@ def lambda_handler(event, context):
         
         # Provide specific guidance for common S3 errors
         if "NoSuchBucket" in error_msg:
-            suggestion = f"Bucket '{bucket_name}' does not exist. Please create it or set S3_BUCKET_NAME environment variable."
+            suggestion = f"Bucket '{source_bucket}' does not exist. Please create it or set S3_SOURCE_BUCKET_NAME environment variable."
         elif "NoSuchKey" in error_msg:
-            suggestion = f"File '{file_key}' not found in bucket '{bucket_name}'."
+            suggestion = f"File '{file_key}' not found in bucket '{source_bucket}'."
         else:
             suggestion = "Check AWS credentials and permissions."
             
@@ -42,7 +61,7 @@ def lambda_handler(event, context):
             'body': json.dumps({
                 'error': error_msg,
                 'suggestion': suggestion,
-                'bucket': bucket_name,
+                'bucket': source_bucket,
                 'key': file_key
             })
         }

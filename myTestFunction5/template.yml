@@ -2,11 +2,11 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: An AWS Serverless Application Model template describing your function.
 Resources:
-  myTestFunction:
+  myTestFunction5:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./src
-      Description: ''
+      Description: 'Test function 5'
       MemorySize: 128
       Timeout: 3
       Handler: lambda_function.lambda_handler
@@ -30,7 +30,7 @@ Resources:
           - logs:CreateLogStream
           - logs:PutLogEvents
           Resource:
-          - arn:aws:logs:us-east-2:795575357719:log-group:/aws/lambda/myTestFunction:*
+          - arn:aws:logs:us-east-2:795575357719:log-group:/aws/lambda/myTestFunction5:*
       RecursiveLoop: Terminate
       SnapStart:
         ApplyOn: None

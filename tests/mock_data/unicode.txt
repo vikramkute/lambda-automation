@@ -1,0 +1,3 @@
+Testing Unicode: café, naïve, résumé
+Emojis: 🚀 ✨ 🎉 💻
+Special chars: ñ ü ö ä

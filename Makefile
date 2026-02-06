@@ -43,12 +43,14 @@ upgrade: validate-config ## Upgrade all Lambda functions to latest Python runtim
 
 test: ## Run pytest test suite for all functions
 	@echo "$(BLUE)Running tests...$(NC)"
-	$(PYTHON) -m pytest $$($(PYTHON) -c "import yaml; c=yaml.safe_load(open('$(CONFIG)')); print(c.get('build',{}).get('test_dir','tests'))")/ -v --tb=short
+	@TEST_DIR=$$($(PYTHON) -c "import yaml; c=yaml.safe_load(open('$(CONFIG)')); print(c.get('build',{}).get('test_dir','tests'))"); \
+	$(PYTHON) -m pytest $$TEST_DIR/test_lambda_functions.py $$TEST_DIR/test_s3_trigger_functions.py -v --tb=short --cov=. --cov-report=html
 	@echo "$(GREEN)[OK] Tests passed$(NC)"
 
 test-fast: ## Run tests without SAM CLI tests
 	@echo "$(BLUE)Running tests (fast mode)...$(NC)"
-	SKIP_SAM_TESTS=true $(PYTHON) -m pytest $$($(PYTHON) -c "import yaml; c=yaml.safe_load(open('$(CONFIG)')); print(c.get('build',{}).get('test_dir','tests'))")/ -v --tb=short
+	@TEST_DIR=$$($(PYTHON) -c "import yaml; c=yaml.safe_load(open('$(CONFIG)')); print(c.get('build',{}).get('test_dir','tests'))"); \
+	SKIP_SAM_TESTS=true $(PYTHON) -m pytest $$TEST_DIR/test_lambda_functions.py $$TEST_DIR/test_s3_trigger_functions.py -v --tb=short --cov=. --cov-report=html
 	@echo "$(GREEN)[OK] Tests passed$(NC)"
 
 build: ## Build all Lambda functions with SAM CLI and create ZIP packages

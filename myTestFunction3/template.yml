@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: An AWS Serverless Application Model template describing your function.
 Resources:
-  myTestFunction:
+  myTestFunction3:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./src
@@ -30,7 +30,7 @@ Resources:
           - logs:CreateLogStream
           - logs:PutLogEvents
           Resource:
-          - arn:aws:logs:us-east-2:795575357719:log-group:/aws/lambda/myTestFunction:*
+          - arn:aws:logs:us-east-2:795575357719:log-group:/aws/lambda/myTestFunction3:*
       RecursiveLoop: Terminate
       SnapStart:
         ApplyOn: None

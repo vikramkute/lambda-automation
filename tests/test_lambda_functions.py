@@ -110,94 +110,6 @@ def lambda_context():
     return LambdaContext()
 
 
-# Test Suite for myTestFunction1 (S3 operations)
-class TestMyTestFunction1:
-    """Test suite for myTestFunction1."""
-    
-    @pytest.fixture(autouse=True)
-    def setup(self, aws_credentials):
-        """Setup for each test."""
-        self.handler = LambdaTestHelper.load_lambda_handler('myTestFunction1')
-        self.config = LambdaTestHelper.get_function_config('myTestFunction1')
-    
-    @mock_aws
-    def test_lambda_handler_with_s3_success(self, lambda_context):
-        """Test successful S3 read operation."""
-        # Setup S3 with a test bucket name
-        s3_client = boto3.client('s3', region_name='us-east-1')
-        bucket_name = os.environ.get('S3_BUCKET_NAME', 'test-lambda-bucket')
-        
-        s3_client.create_bucket(Bucket=bucket_name)
-        s3_client.put_object(Bucket=bucket_name, Key='sample.txt', Body=b'Test content')
-        
-        # Test the function with environment variable
-        os.environ['S3_BUCKET_NAME'] = bucket_name
-        event = {}  # Function doesn't require event data
-        response = self.handler(event, lambda_context)
-        
-        assert response['statusCode'] == 200
-        body = json.loads(response['body'])
-        assert 'message' in body
-        assert 'content' in body
-        assert body['content'] == 'Test content'
-    
-    @mock_aws
-    def test_lambda_handler_missing_bucket(self, lambda_context):
-        """Test error handling when S3 bucket doesn't exist."""
-        # Don't create the bucket - test error handling
-        os.environ['S3_BUCKET_NAME'] = 'nonexistent-bucket'
-        event = {}
-        
-        response = self.handler(event, lambda_context)
-        assert response['statusCode'] == 500
-        body = json.loads(response['body'])
-        assert 'error' in body
-    
-    @mock_aws
-    def test_lambda_handler_missing_object(self, lambda_context):
-        """Test error handling when S3 object doesn't exist."""
-        s3_client = boto3.client('s3', region_name='us-east-1')
-        bucket_name = 'test-bucket-empty'
-        s3_client.create_bucket(Bucket=bucket_name)
-        # Don't put any objects - test missing object handling
-        
-        os.environ['S3_BUCKET_NAME'] = bucket_name
-        event = {}
-        
-        response = self.handler(event, lambda_context)
-        assert response['statusCode'] == 500
-        body = json.loads(response['body'])
-        assert 'error' in body
-    
-    def test_lambda_handler_no_credentials(self, lambda_context):
-        """Test error handling when AWS credentials are missing."""
-        # Remove AWS credentials
-        for var in ['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY']:
-            os.environ.pop(var, None)
-        
-        event = {}
-        response = self.handler(event, lambda_context)
-        assert response['statusCode'] == 500
-        body = json.loads(response['body'])
-        assert 'error' in body
-    
-    def test_function_config_exists(self):
-        """Test that function configuration exists."""
-        assert self.config is not None
-        assert self.config['name'] == 'myTestFunction1'
-        assert 'runtime' in self.config
-        assert 'memory' in self.config
-    
-    def test_function_handler_callable(self):
-        """Test that handler is callable."""
-        assert callable(self.handler)
-    
-    def test_function_runtime_version(self):
-        """Test that function is configured with latest Python runtime."""
-        assert self.config['runtime'] in ['python3.14']
-        assert int(self.config['runtime'].split('.')[-1]) >= 14
-
-
 # Error Scenario Tests
 class TestErrorScenarios:
     """Test error handling across all Lambda functions."""
@@ -405,23 +317,6 @@ class TestAllFunctions:
             assert response['statusCode'] in [200, 400, 500]
         except Exception as e:
             pytest.fail(f"Handler execution failed for {func_config['name']}: {e}")
-        
-        # Test with S3 trigger event
-        s3_event = {
-            "Records": [{
-                "eventSource": "aws:s3",
-                "s3": {
-                    "bucket": {"name": "test-bucket"},
-                    "object": {"key": "test-file.txt"}
-                }
-            }]
-        }
-        try:
-            response = handler(s3_event, lambda_context)
-            assert 'statusCode' in response
-            assert response['statusCode'] in [200, 400, 500]
-        except Exception as e:
-            pytest.fail(f"Handler execution with S3 event failed for {func_config['name']}: {e}")
 
 
 # Local testing with SAM CLI

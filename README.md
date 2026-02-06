@@ -216,4 +216,4 @@ All functions use Python 3.14 runtime with 128MB memory and 30s timeout.
 
 ---
 
-**📚 Documentation:** [SETUP.md](SETUP.md) • [REFERENCE.md](REFERENCE.md) • [AUTOMATION_GUIDE.md](AUTOMATION_GUIDE.md) • [COMPARISON_GUIDE.md](COMPARISON_GUIDE.md)
+**📚 Documentation:** [SETUP.md](SETUP.md) • [REFERENCE.md](REFERENCE.md) • [AUTOMATION_GUIDE.md](AUTOMATION_GUIDE.md) • [COMPARISON_GUIDE.md](COMPARISON_GUIDE.md) • [TESTING_GUIDE.md](TESTING_GUIDE.md)

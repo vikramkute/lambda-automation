@@ -8,8 +8,15 @@ functions:
     runtime: python3.14  # Latest supported Python runtime
     description: "Test function 1 - S3 read operations testing"
     enabled: true
-    memory: 130
-    timeout: 31
+    memory: 128
+    timeout: 30
+    environment:
+      S3_DESTINATION_BUCKET_NAME: "mybucket3accesspoint-znfe5kdypno5qb9wyxo5iexhikrjause1a-s3alias"
+    s3_trigger:
+      bucket: "test-s3-demo-bucket2"
+      events: ["s3:ObjectCreated:*"]
+      filter_prefix: ""
+      filter_suffix: ""
 
   - name: myTestFunction2
     path: ./myTestFunction2
@@ -31,7 +38,7 @@ functions:
     path: ./myTestFunction4
     runtime: python3.14
     description: "Test function 4"
-    enabled: false
+    enabled: true
     memory: 128
     timeout: 30
 
@@ -39,7 +46,7 @@ functions:
     path: ./myTestFunction5
     runtime: python3.14
     description: "Test function 5"
-    enabled: false
+    enabled: true
     memory: 128
     timeout: 30
 

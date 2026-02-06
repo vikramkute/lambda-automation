@@ -169,20 +169,26 @@ class LambdaDeployer:
         for func_config in self.config.get('functions', []):
             if func_config.get('enabled', True):
                 # Get environment variables and filter out AWS reserved keys
-                env_vars = func_config.get('environment_variables', {})
+                env_vars = func_config.get('environment', {})
                 # Remove any AWS reserved environment variables
                 filtered_env_vars = {
                     k: v for k, v in env_vars.items() 
                     if not k.startswith('AWS_') or k in ['AWS_LAMBDA_FUNCTION_TIMEOUT']
                 }
                 
-                deployment_config['functions'][func_config['name']] = {
+                func_deployment = {
                     'runtime': func_config['runtime'],
                     'memory': func_config['memory'],
                     'timeout': func_config['timeout'],
                     'environment': filtered_env_vars,
                     'description': func_config.get('description', '')
                 }
+                
+                # Add S3 trigger configuration if present
+                if 's3_trigger' in func_config:
+                    func_deployment['s3_trigger'] = func_config['s3_trigger']
+                
+                deployment_config['functions'][func_config['name']] = func_deployment
         
         return deployment_config
 
