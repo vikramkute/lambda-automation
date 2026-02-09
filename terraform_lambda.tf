@@ -8,11 +8,13 @@ variable "aws_region" {
 variable "lambda_functions" {
   description = "Configuration for Lambda functions"
   type = map(object({
-    runtime         = string
-    memory          = number
-    timeout         = number
-    environment     = optional(map(string))
-    description     = optional(string)
+    runtime                 = string
+    memory                  = number
+    timeout                 = number
+    environment             = optional(map(string))
+    description             = optional(string)
+    api_gateway_enabled     = optional(bool)
+    api_gateway_http_method = optional(string)
     s3_trigger      = optional(object({
       bucket        = string
       events        = list(string)

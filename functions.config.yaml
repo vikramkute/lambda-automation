@@ -25,30 +25,33 @@ functions:
     enabled: true
     memory: 128
     timeout: 30
+    api_gateway:
+      enabled: true
+      http_method: "POST"
+  
+  # - name: myTestFunction3
+  #   path: ./myTestFunction3
+  #   runtime: python3.14
+  #   description: "Test function 3"
+  #   enabled: true
+  #   memory: 128
+  #   timeout: 30
 
-  - name: myTestFunction3
-    path: ./myTestFunction3
-    runtime: python3.14
-    description: "Test function 3"
-    enabled: true
-    memory: 128
-    timeout: 30
+  # - name: myTestFunction4
+  #   path: ./myTestFunction4
+  #   runtime: python3.14
+  #   description: "Test function 4"
+  #   enabled: true
+  #   memory: 128
+  #   timeout: 30
 
-  - name: myTestFunction4
-    path: ./myTestFunction4
-    runtime: python3.14
-    description: "Test function 4"
-    enabled: true
-    memory: 128
-    timeout: 30
-
-  - name: myTestFunction5
-    path: ./myTestFunction5
-    runtime: python3.14
-    description: "Test function 5"
-    enabled: true
-    memory: 128
-    timeout: 30
+  # - name: myTestFunction5
+  #   path: ./myTestFunction5
+  #   runtime: python3.14
+  #   description: "Test function 5"
+  #   enabled: true
+  #   memory: 128
+  #   timeout: 30
 
 # Global settings
 global:

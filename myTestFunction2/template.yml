@@ -1,3 +1,9 @@
+# This AWS SAM template has been generated from your function's configuration. If
+# your function has one or more triggers, note that the AWS resources associated
+# with these triggers aren't fully specified in this template and include
+# placeholder values. Open this template in AWS Infrastructure Composer or your
+# favorite IDE and modify it to specify a serverless application with other AWS
+# resources.
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: An AWS Serverless Application Model template describing your function.
@@ -6,13 +12,13 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./src
-      Description: 'Test function 2'
+      Description: Test function 2
       MemorySize: 128
       Timeout: 30
       Handler: lambda_function.lambda_handler
       Runtime: python3.14
       Architectures:
-      - x86_64
+        - x86_64
       EphemeralStorage:
         Size: 512
       EventInvokeConfig:
@@ -20,19 +26,28 @@ Resources:
         MaximumRetryAttempts: 2
       PackageType: Zip
       Policies:
-      - Statement:
-        - Effect: Allow
-          Action:
-          - logs:CreateLogGroup
-          Resource: arn:aws:logs:us-east-2:795575357719:*
-        - Effect: Allow
-          Action:
-          - logs:CreateLogStream
-          - logs:PutLogEvents
-          Resource:
-          - arn:aws:logs:us-east-2:795575357719:log-group:/aws/lambda/myTestFunction2:*
+        - Statement:
+            - Effect: Allow
+              Action:
+                - s3:*
+                - s3-object-lambda:*
+              Resource: '*'
       RecursiveLoop: Terminate
       SnapStart:
         ApplyOn: None
+      Tags:
+        Function: myTestFunction2
+        ManagedBy: Terraform
+        MemorySize: '128'
+        Project: lambda-automation
+        Runtime: python3.14
+        TimeoutSeconds: '30'
+        UpdatedAt: '2026-02-09'
+      Events:
+        Api1:
+          Type: Api
+          Properties:
+            Path: /mytestfunction2
+            Method: GET
       RuntimeManagementConfig:
         UpdateRuntimeOn: Auto

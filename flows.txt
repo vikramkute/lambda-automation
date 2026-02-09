@@ -1,0 +1,27 @@
+Flow 1: Trigger Lambda Function on S3 File Upload
+
+1. Upload a file to the source S3 bucket.
+2. The upload event triggers Lambda function myTestFunction1.
+3. Lambda function myTestFunction1 reads the document content.
+4. Transforms the content to uppercase.
+5. Writes the transformed file to the destination S3 bucket.
+
+
+Flow 2: Trigger Lambda Function via API Gateway
+
+1. API Gateway receives a POST request with JSON data and invokes myTestFunction2.
+2. myTestFunction2 processes the JSON data and uploads a file to the source S3 bucket.
+3. The upload event triggers Lambda function myTestFunction1.
+4. Lambda function myTestFunction1 reads the document content.
+5. Transforms the content to uppercase.
+6. Writes the transformed file to the destination S3 bucket.
+
+
+Flow 3: Trigger Lambda Function via EventBridge Scheduler
+
+1. Scheduler triggers at a specific time and passes JSON data to myTestFunction2.
+2. myTestFunction2 creates a file with the JSON data and uploads it to the source S3 bucket.
+3. The upload event triggers Lambda function myTestFunction1.
+4. Lambda function myTestFunction1 reads the document content.
+5. Transforms the content to uppercase.
+6. Writes the transformed file to the destination S3 bucket.

@@ -41,11 +41,11 @@ Resources:
       Tags:
         Function: myTestFunction1
         ManagedBy: Terraform
-        MemorySize: '130'
+        MemorySize: '128'
         Project: lambda-automation
         Runtime: python3.14
-        TimeoutSeconds: '31'
-        UpdatedAt: '2026-02-06'
+        TimeoutSeconds: '30'
+        UpdatedAt: '2026-02-09'
       Events:
         BucketEvent1:
           Type: S3

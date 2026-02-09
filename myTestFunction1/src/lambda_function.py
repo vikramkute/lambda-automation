@@ -7,6 +7,16 @@ print('Loading function')
 
 s3 = boto3.client('s3')
 
+def transform_json_values(obj):
+    if isinstance(obj, dict):
+        return {k: transform_json_values(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [transform_json_values(item) for item in obj]
+    elif isinstance(obj, str):
+        return obj.upper()
+    else:
+        return obj
+
 def lambda_handler(event, context):
     try:
         source_bucket = event['Records'][0]['s3']['bucket']['name']
@@ -31,8 +41,19 @@ def lambda_handler(event, context):
             }
         print(f"Read file {file_key} from bucket {source_bucket}")
         
-        # 2. Transform the file content (example: convert to uppercase)
-        transformed_content = original_content.upper()
+        # 2. Transform the file content (JSON values only)
+        if file_key.lower().endswith('.json'):
+            try:
+                data = json.loads(original_content)
+                transformed_data = transform_json_values(data)
+                transformed_content = json.dumps(transformed_data, indent=2)
+            except json.JSONDecodeError:
+                return {
+                    'statusCode': 400,
+                    'body': json.dumps({'error': 'Invalid JSON file'})
+                }
+        else:
+            transformed_content = original_content.upper()
         
         # 3. Save the transformed file into the destination S3 bucket
         s3.put_object(Bucket=destination_bucket, Key=file_key, Body=transformed_content)

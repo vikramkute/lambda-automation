@@ -188,6 +188,12 @@ class LambdaDeployer:
                 if 's3_trigger' in func_config:
                     func_deployment['s3_trigger'] = func_config['s3_trigger']
                 
+                # Add API Gateway configuration if present
+                if 'api_gateway' in func_config:
+                    api_config = func_config['api_gateway']
+                    func_deployment['api_gateway_enabled'] = api_config.get('enabled', False)
+                    func_deployment['api_gateway_http_method'] = api_config.get('http_method', 'POST')
+                
                 deployment_config['functions'][func_config['name']] = func_deployment
         
         return deployment_config
