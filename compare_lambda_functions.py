@@ -37,8 +37,8 @@ def count_total_or_diff_lines(lines1, lines2):
 def _output_equal_lines(lines1, lines2, i1, i2, j1, j2, width, file, pdf_data):
     """Output equal lines in side-by-side comparison."""
     for i, j in zip(range(i1, i2), range(j1, j2)):
-        left = lines1[i][:width-1]
-        right = lines2[j][:width-1]
+        left = lines1[i]
+        right = lines2[j]
         line = f"{left:<{width}} | {right}"
         print(line)
         if file:
@@ -49,7 +49,7 @@ def _output_equal_lines(lines1, lines2, i1, i2, j1, j2, width, file, pdf_data):
 def _output_deleted_lines(lines1, i1, i2, width, file, pdf_data):
     """Output deleted lines in side-by-side comparison."""
     for i in range(i1, i2):
-        left = lines1[i][:width-1]
+        left = lines1[i]
         print(f"\033[91m{left:<{width}}\033[0m | ")
         if file:
             file.write(f"➖ {left}\n")
@@ -59,7 +59,7 @@ def _output_deleted_lines(lines1, i1, i2, width, file, pdf_data):
 def _output_inserted_lines(lines2, j1, j2, width, file, pdf_data):
     """Output inserted lines in side-by-side comparison."""
     for j in range(j1, j2):
-        right = lines2[j][:width-1]
+        right = lines2[j]
         print(f"{'':<{width}} | \033[92m{right}\033[0m")
         if file:
             file.write(f"{'':<{width}} | ➕ {right}\n")
@@ -70,8 +70,8 @@ def _output_replaced_lines(lines1, lines2, i1, i2, j1, j2, width, file, pdf_data
     """Output replaced lines in side-by-side comparison."""
     max_lines = max(i2-i1, j2-j1)
     for k in range(max_lines):
-        left = lines1[i1+k][:width-1] if i1+k < i2 and i1+k < len(lines1) else ''
-        right = lines2[j1+k][:width-1] if j1+k < j2 and j1+k < len(lines2) else ''
+        left = lines1[i1+k] if i1+k < i2 and i1+k < len(lines1) else ''
+        right = lines2[j1+k] if j1+k < j2 and j1+k < len(lines2) else ''
         left_color = f"\033[91m{left:<{width}}\033[0m" if left else f"{'':<{width}}"
         right_color = f"\033[92m{right}\033[0m" if right else ''
         print(f"{left_color} | {right_color}")
@@ -107,7 +107,7 @@ def print_side_by_side(lines1, lines2, func1, func2, width=70, file=None, pdf_da
         elif tag == 'replace':
             _output_replaced_lines(lines1, lines2, i1, i2, j1, j2, width, file, pdf_data)
 
-def _create_pdf_table(func1, func2, pdf_data, styles, pdf_data_limit=100):
+def _create_pdf_table(func1, func2, pdf_data, styles, pdf_data_limit=None):
     """Create PDF table from comparison data."""
     if pdf_data is None:
         pdf_data = []
@@ -115,7 +115,8 @@ def _create_pdf_table(func1, func2, pdf_data, styles, pdf_data_limit=100):
     header_style = ParagraphStyle('Header', parent=styles['Normal'], fontSize=8, textColor=colors.white, alignment=TA_LEFT)
     table_data = [[Paragraph(f"<b>{func1}</b>", header_style), Paragraph(f"<b>{func2}</b>", header_style)]]
     
-    for tag, left, right in pdf_data[:pdf_data_limit]:
+    data_to_show = pdf_data[:pdf_data_limit] if pdf_data_limit else pdf_data
+    for tag, left, right in data_to_show:
         if tag == 'delete':
             table_data.append([Paragraph(f"<font color='red'>➖ {left}</font>", styles['Code']), Paragraph("", styles['Code'])])
         elif tag == 'insert':
@@ -162,19 +163,13 @@ def generate_pdf_report(func1, func2, file_comparisons, total_diff_lines, output
     story.append(Spacer(1, 0.3*inch))
     
     # File comparisons
-    pdf_data_limit = 100
     for file_name, status, pdf_data in file_comparisons:
         story.append(Paragraph(f"<b>File: {file_name}</b>", styles['Heading2']))
         story.append(Paragraph(status, styles['Normal']))
         story.append(Spacer(1, 0.1*inch))
         
         if pdf_data:
-            if len(pdf_data) > pdf_data_limit:
-                truncate_msg = f"Showing first {pdf_data_limit} differences ({len(pdf_data)} total)"
-                story.append(Paragraph(f"<i>{truncate_msg}</i>", styles['Normal']))
-                story.append(Spacer(1, 0.05*inch))
-            
-            table = _create_pdf_table(func1, func2, pdf_data, styles, pdf_data_limit)
+            table = _create_pdf_table(func1, func2, pdf_data, styles)
             story.append(table)
         
         story.append(Spacer(1, 0.2*inch))
