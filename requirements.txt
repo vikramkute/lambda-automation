@@ -6,7 +6,7 @@ botocore==1.31.85
 # Testing
 pytest==7.4.3
 pytest-cov==4.1.0
-moto==4.2.14  # AWS service mocking
+moto==5.1.21  # AWS service mocking
 
 # Lambda dependencies (add more as needed)
 aws-lambda-powertools==2.25.0
