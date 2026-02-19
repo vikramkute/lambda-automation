@@ -19,54 +19,6 @@ The framework includes two test suites:
    - Storage operations
    - Performance testing
 
-## Test Suites
-
-### 1. test_lambda_functions.py (31 tests)
-
-General Lambda function testing for all enabled functions.
-
-**Test Classes**:
-- `TestMyTestFunction1`: Function-specific tests (7 tests)
-- `TestErrorScenarios`: Error handling (2 tests per function)
-- `TestAllFunctions`: Generic tests for all functions (22 tests)
-- `TestLocalExecution`: SAM CLI integration (optional)
-
-**Coverage**:
-- ✅ Configuration validation (name, path, runtime, memory, timeout)
-- ✅ File structure (lambda_function.py, template.yml, requirements.txt)
-- ✅ Handler loading and callability
-- ✅ Runtime version checks (Python 3.14)
-- ✅ Template validation
-- ✅ Dependency compatibility
-- ✅ Syntax validation
-- ✅ Error handling with invalid events
-- ✅ AWS service error handling
-- ✅ SAM build validation (optional)
-
-### 2. test_s3_trigger_functions.py (17 tests)
-
-S3 trigger-specific testing for functions with `s3_trigger` configuration.
-
-**Test Classes**:
-- `TestS3TriggerProcessingStorage`: Core workflow tests (5 tests)
-- `TestS3TriggerErrorHandling`: Error scenarios (5 tests)
-- `TestS3TriggerConfiguration`: Configuration validation (3 tests)
-- `TestS3TriggerPerformance`: Performance tests (2 tests)
-- `TestGenericS3TriggerFunction`: Reusable tests (2 tests)
-
-**Coverage**:
-- ✅ S3 event trigger and processing
-- ✅ Multiple file types (txt, json, csv, unicode)
-- ✅ Large file processing (100KB+)
-- ✅ Unicode content handling
-- ✅ Empty file handling
-- ✅ Invalid event structures
-- ✅ Missing resources (buckets, objects)
-- ✅ Binary file rejection
-- ✅ Configuration validation
-- ✅ Environment variables
-- ✅ Performance and timeout testing
-
 ## Running Tests
 
 ### Run All Tests
@@ -443,15 +395,6 @@ Track these metrics for quality assurance:
 3. **Add custom tests** for specific business logic
 4. **Integrate into CI/CD** pipeline
 5. **Monitor metrics** and maintain 100% pass rate
-
-## Summary
-
-✅ **48 total tests** (46 without SAM)  
-✅ **Two test suites** covering general and S3-specific scenarios  
-✅ **Automatic testing** for all enabled functions  
-✅ **Mock AWS services** for isolated testing  
-✅ **Fast execution** (< 8 seconds for full suite)  
-✅ **CI/CD ready** with comprehensive coverage
 
 ---
 
