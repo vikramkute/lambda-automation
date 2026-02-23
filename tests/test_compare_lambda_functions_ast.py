@@ -1,4 +1,4 @@
-"""Test suite for compare_lambda_functions_ats.py"""
+"""Test suite for compare_lambda_functions_ast.py"""
 
 import pytest
 import tempfile
@@ -9,8 +9,8 @@ from unittest.mock import patch, MagicMock
 import sys
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from compare_lambda_functions_ats import (
-    ATSComparator, FunctionConfig, FunctionDependencies, 
+from compare_lambda_functions_ast import (
+    ASTComparator, FunctionConfig, FunctionDependencies, 
     TestResult, FunctionMetrics
 )
 
@@ -55,8 +55,8 @@ class TestFunctionDependencies:
         assert "requests" in deps.packages
 
 
-class TestATSComparator:
-    """Test ATSComparator class."""
+class TestASTComparator:
+    """Test ASTComparator class."""
     
     @pytest.fixture
     def temp_functions(self):
@@ -103,7 +103,7 @@ Resources:
     def test_comparator_initialization(self, temp_functions):
         """Test initializing comparator."""
         func1, func2 = temp_functions
-        comparator = ATSComparator(str(func1), str(func2))
+        comparator = ASTComparator(str(func1), str(func2))
         
         assert comparator.func1_path == func1
         assert comparator.func2_path == func2
@@ -111,12 +111,12 @@ Resources:
     def test_comparator_invalid_paths(self):
         """Test comparator with invalid paths."""
         with pytest.raises(ValueError):
-            ATSComparator("/nonexistent/path1", "/nonexistent/path2")
+            ASTComparator("/nonexistent/path1", "/nonexistent/path2")
     
     def test_extract_function_config(self, temp_functions):
         """Test extracting function configuration."""
         func1, func2 = temp_functions
-        comparator = ATSComparator(str(func1), str(func2))
+        comparator = ASTComparator(str(func1), str(func2))
         
         config1 = comparator._extract_function_config("func1", func1)
         config2 = comparator._extract_function_config("func2", func2)
@@ -129,7 +129,7 @@ Resources:
     def test_get_requirements(self, temp_functions):
         """Test extracting requirements."""
         func1, func2 = temp_functions
-        comparator = ATSComparator(str(func1), str(func2))
+        comparator = ASTComparator(str(func1), str(func2))
         
         deps1 = comparator._get_requirements(func1)
         deps2 = comparator._get_requirements(func2)
@@ -141,7 +141,7 @@ Resources:
     def test_compare_configs(self, temp_functions):
         """Test configuration comparison."""
         func1, func2 = temp_functions
-        comparator = ATSComparator(str(func1), str(func2))
+        comparator = ASTComparator(str(func1), str(func2))
         
         config1 = comparator._extract_function_config("func1", func1)
         config2 = comparator._extract_function_config("func2", func2)
@@ -156,7 +156,7 @@ Resources:
     def test_compare_dependencies(self, temp_functions):
         """Test dependency comparison."""
         func1, func2 = temp_functions
-        comparator = ATSComparator(str(func1), str(func2))
+        comparator = ASTComparator(str(func1), str(func2))
         
         deps1 = comparator._get_requirements(func1)
         deps2 = comparator._get_requirements(func2)
@@ -169,7 +169,7 @@ Resources:
     def test_calculate_metrics(self, temp_functions):
         """Test metrics calculation."""
         func1, func2 = temp_functions
-        comparator = ATSComparator(str(func1), str(func2))
+        comparator = ASTComparator(str(func1), str(func2))
         
         config1 = comparator._extract_function_config("func1", func1)
         deps1 = comparator._get_requirements(func1)
@@ -183,7 +183,7 @@ Resources:
     def test_compare_metrics(self, temp_functions):
         """Test metrics comparison."""
         func1, func2 = temp_functions
-        comparator = ATSComparator(str(func1), str(func2))
+        comparator = ASTComparator(str(func1), str(func2))
         
         config1 = comparator._extract_function_config("func1", func1)
         config2 = comparator._extract_function_config("func2", func2)
@@ -202,7 +202,7 @@ Resources:
     def test_get_significance(self, temp_functions):
         """Test significance level determination."""
         func1, func2 = temp_functions
-        comparator = ATSComparator(str(func1), str(func2))
+        comparator = ASTComparator(str(func1), str(func2))
         
         assert comparator._get_significance('runtime') == 'CRITICAL'
         assert comparator._get_significance('memory') == 'CRITICAL'
@@ -212,7 +212,7 @@ Resources:
     def test_full_comparison(self, temp_functions):
         """Test complete comparison."""
         func1, func2 = temp_functions
-        comparator = ATSComparator(str(func1), str(func2))
+        comparator = ASTComparator(str(func1), str(func2))
         
         result = comparator.compare()
         
@@ -227,11 +227,11 @@ Resources:
     def test_generate_report(self, temp_functions):
         """Test report generation."""
         func1, func2 = temp_functions
-        comparator = ATSComparator(str(func1), str(func2))
+        comparator = ASTComparator(str(func1), str(func2))
         
         report = comparator.generate_report()
         
-        assert 'ATS-Level Comparison Report' in report
+        assert 'AST-Level Comparison Report' in report
         assert 'CONFIGURATION COMPARISON' in report
         assert 'DEPENDENCIES COMPARISON' in report
         assert 'PERFORMANCE METRICS' in report
@@ -239,7 +239,7 @@ Resources:
     def test_generate_json_report(self, temp_functions):
         """Test JSON report generation."""
         func1, func2 = temp_functions
-        comparator = ATSComparator(str(func1), str(func2))
+        comparator = ASTComparator(str(func1), str(func2))
         
         with tempfile.NamedTemporaryFile(suffix='.json', delete=False) as f:
             json_file = f.name
@@ -259,7 +259,7 @@ Resources:
     def test_load_template_config(self, temp_functions):
         """Test loading SAM template."""
         func1, func2 = temp_functions
-        comparator = ATSComparator(str(func1), str(func2))
+        comparator = ASTComparator(str(func1), str(func2))
         
         template = comparator._load_template_config(func1)
         
@@ -269,7 +269,7 @@ Resources:
     def test_missing_template(self, temp_functions):
         """Test handling missing template."""
         func1, func2 = temp_functions
-        comparator = ATSComparator(str(func1), str(func2))
+        comparator = ASTComparator(str(func1), str(func2))
         
         # Create temp dir without template
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -279,7 +279,7 @@ Resources:
     def test_get_event_sources(self, temp_functions):
         """Test event source detection."""
         func1, func2 = temp_functions
-        comparator = ATSComparator(str(func1), str(func2))
+        comparator = ASTComparator(str(func1), str(func2))
         
         sources = comparator._get_event_sources(func1)
         
@@ -320,7 +320,7 @@ Resources:
             func_new = tmpdir / "func_new"
             
             # Run comparison
-            comparator = ATSComparator(str(func_old), str(func_new))
+            comparator = ASTComparator(str(func_old), str(func_new))
             result = comparator.compare()
             
             # Verify result structure

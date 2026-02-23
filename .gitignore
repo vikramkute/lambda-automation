@@ -138,4 +138,4 @@ lambda-deployment-*.zip
 
 # Comparison reports
 comparisons/
-comparisons-ats/
+comparisons-ast/

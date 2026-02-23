@@ -1,4 +1,4 @@
-.PHONY: help setup install-deps validate-config list-functions check-runtime-version upgrade build compare compare-config compare-ats compare-ats-config test test-fast init-terraform create-log-groups terraform-output plan-deploy deploy delete-function destroy-infra clean full-pipeline
+.PHONY: help setup install-deps validate-config list-functions check-runtime-version upgrade build compare compare-config compare-ast compare-ast-config test test-fast init-terraform create-log-groups terraform-output plan-deploy deploy delete-function destroy-infra clean full-pipeline
 
 # Variables
 PYTHON := python3
@@ -84,31 +84,31 @@ compare-config: ## Compare multiple function pairs from comparison.config.yaml
 	@$(PYTHON) compare_lambda_functions.py comparison.config.yaml
 	@echo "$(GREEN)[OK] All comparisons complete$(NC)"
 
-compare-ats: ## Compare two Lambda functions at ATS level (Usage: make compare-ats FUNC1=function1 FUNC2=function2)
+compare-ast: ## Compare two Lambda functions at AST level (Usage: make compare-ast FUNC1=function1 FUNC2=function2)
 	@if [ -z "$(FUNC1)" ] || [ -z "$(FUNC2)" ]; then \
-		echo "$(RED)ERROR: Two function names required. Usage: make compare-ats FUNC1=function1 FUNC2=function2$(NC)"; \
+		echo "$(RED)ERROR: Two function names required. Usage: make compare-ast FUNC1=function1 FUNC2=function2$(NC)"; \
 		exit 1; \
 	fi
-	@echo "$(BLUE)Performing ATS-level comparison: $(FUNC1) vs $(FUNC2)...$(NC)"
-	@if [ ! -f "compare_lambda_functions_ats.py" ]; then \
-		echo "$(RED)ERROR: compare_lambda_functions_ats.py not found!$(NC)"; \
+	@echo "$(BLUE)Performing AST-level comparison: $(FUNC1) vs $(FUNC2)...$(NC)"
+	@if [ ! -f "compare_lambda_functions_ast.py" ]; then \
+		echo "$(RED)ERROR: compare_lambda_functions_ast.py not found!$(NC)"; \
 		exit 1; \
 	fi
-	@$(PYTHON) compare_lambda_functions_ats.py $(FUNC1) $(FUNC2)
-	@echo "$(GREEN)[OK] ATS comparison complete$(NC)"
+	@$(PYTHON) compare_lambda_functions_ast.py $(FUNC1) $(FUNC2)
+	@echo "$(GREEN)[OK] AST comparison complete$(NC)"
 
-compare-ats-config: ## Compare multiple function pairs from comparison.config.yaml at ATS level
-	@echo "$(BLUE)Running ATS-level comparisons from comparison.config.yaml...$(NC)"
-	@if [ ! -f "compare_lambda_functions_ats.py" ]; then \
-		echo "$(RED)ERROR: compare_lambda_functions_ats.py not found!$(NC)"; \
+compare-ast-config: ## Compare multiple function pairs from comparison.config.yaml at AST level
+	@echo "$(BLUE)Running AST-level comparisons from comparison.config.yaml...$(NC)"
+	@if [ ! -f "compare_lambda_functions_ast.py" ]; then \
+		echo "$(RED)ERROR: compare_lambda_functions_ast.py not found!$(NC)"; \
 		exit 1; \
 	fi
 	@if [ ! -f "comparison.config.yaml" ]; then \
 		echo "$(RED)ERROR: comparison.config.yaml not found!$(NC)"; \
 		exit 1; \
 	fi
-	@$(PYTHON) compare_lambda_functions_ats.py comparison.config.yaml
-	@echo "$(GREEN)[OK] All ATS comparisons complete$(NC)"
+	@$(PYTHON) compare_lambda_functions_ast.py comparison.config.yaml
+	@echo "$(GREEN)[OK] All AST comparisons complete$(NC)"
 
 init-terraform: ## Initialize Terraform configuration
 	@echo "$(BLUE)Initializing Terraform...$(NC)"

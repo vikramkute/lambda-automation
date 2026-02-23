@@ -2,11 +2,8 @@
 # Define pairs of Lambda functions to compare
 
 comparisons:
-  - function1: myTestFunction1
-    function2: myTestFunction2
+  - function1: rnd/myTestFunction1
+    function2: prod/myTestFunction1
   
-  - function1: myTestFunction3
-    function2: myTestFunction4
-
-  - function1: myTestFunction1
-    function2: myTestFunction5
+  - function1: rnd/myTestFunction2
+    function2: prod/myTestFunction2

@@ -1,5 +1,5 @@
 ================================================================================
-AWS Lambda Function ATS-Level Comparison Report
+AWS Lambda Function AST-Level Comparison Report
 ================================================================================
 
 Generated: 2026-02-23T15:46:43.148713

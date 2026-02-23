@@ -22,8 +22,8 @@ if "%1"=="" (
     echo   run.bat build                 - Build functions
     echo   run.bat compare [f1] [f2]     - Compare two Lambda functions
     echo   run.bat compare-config        - Compare functions from comparison.config.yaml
-    echo   run.bat compare-ats [f1] [f2] - Compare functions at ATS level
-    echo   run.bat compare-ats-config    - ATS compare from comparison.config.yaml
+    echo   run.bat compare-ast [f1] [f2] - Compare functions at AST level
+    echo   run.bat compare-ast-config    - AST compare from comparison.config.yaml
     echo   run.bat init-terraform        - Initialize Terraform
     echo   run.bat create-log-groups     - Create CloudWatch log groups
     echo   run.bat terraform-output      - Show Terraform outputs

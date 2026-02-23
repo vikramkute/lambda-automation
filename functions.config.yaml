@@ -4,7 +4,7 @@
 
 functions:
   - name: myTestFunction1
-    path: ./myTestFunction1
+    path: rnd/myTestFunction1
     runtime: python3.14  # Latest supported Python runtime
     description: "Test function 1 - S3 read operations testing"
     enabled: true
@@ -19,7 +19,7 @@ functions:
       filter_suffix: ""
 
   - name: myTestFunction2
-    path: ./myTestFunction2
+    path: rnd/myTestFunction2
     runtime: python3.14
     description: "Test function 2"
     enabled: true
