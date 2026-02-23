@@ -1,0 +1,1803 @@
+{
+  "timestamp": "2026-02-23T15:47:28.229048",
+  "function1": "myTestFunction1",
+  "function2": "myTestFunction2",
+  "configuration": {
+    "function1": {
+      "name": "myTestFunction1",
+      "runtime": "python3.14",
+      "memory": 128,
+      "timeout": 30,
+      "handler": "lambda_function.lambda_handler",
+      "description": "Test function 1 - S3 read operations testing",
+      "environment_vars": {},
+      "layers": [],
+      "tracing_enabled": false,
+      "ephemeral_storage": 512,
+      "architecture": "x86_64"
+    },
+    "function2": {
+      "name": "myTestFunction2",
+      "runtime": "python3.14",
+      "memory": 128,
+      "timeout": 30,
+      "handler": "lambda_function.lambda_handler",
+      "description": "Test function 2",
+      "environment_vars": {},
+      "layers": [],
+      "tracing_enabled": false,
+      "ephemeral_storage": 512,
+      "architecture": "x86_64"
+    },
+    "differences": [
+      {
+        "field": "name",
+        "function1": "myTestFunction1",
+        "function2": "myTestFunction2",
+        "significance": "MINOR"
+      },
+      {
+        "field": "description",
+        "function1": "Test function 1 - S3 read operations testing",
+        "function2": "Test function 2",
+        "significance": "MINOR"
+      }
+    ]
+  },
+  "dependencies": {
+    "function1": {
+      "python_version": "3.12",
+      "total_packages": 1,
+      "packages": [
+        "boto3>=1.26.0"
+      ],
+      "missing_packages": []
+    },
+    "function2": {
+      "python_version": "3.12",
+      "total_packages": 1,
+      "packages": [
+        "boto3>=1.26.0"
+      ],
+      "missing_packages": []
+    },
+    "differences": {
+      "only_in_function1": [],
+      "only_in_function2": [],
+      "common": [
+        "boto3>=1.26.0"
+      ],
+      "total_difference": 0
+    }
+  },
+  "metrics": {
+    "function1": {
+      "estimated_coldstart_time": 1005.0,
+      "memory_efficiency": 1.0,
+      "dependency_size_mb": 0.5,
+      "code_complexity_score": 8.8,
+      "test_coverage": 0.0
+    },
+    "function2": {
+      "estimated_coldstart_time": 1005.0,
+      "memory_efficiency": 1.0,
+      "dependency_size_mb": 0.5,
+      "code_complexity_score": 5.8,
+      "test_coverage": 0.0
+    },
+    "comparison": {
+      "coldstart_diff_ms": 0.0,
+      "coldstart_faster": "function2",
+      "memory_efficiency_ratio": 1.0,
+      "complexity_diff": -3.000000000000001,
+      "dependency_size_diff_mb": 0.0
+    }
+  },
+  "tests": {
+    "function1": [
+      {
+        "test_name": "TestAPIGatewayPOSTRequests",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayPOSTRequests::test_post_with_valid_json[myTestFunction2] PASSED [  7%]"
+      },
+      {
+        "test_name": "TestAPIGatewayPOSTRequests",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayPOSTRequests::test_post_with_invalid_json[myTestFunction2] PASSED [ 15%]"
+      },
+      {
+        "test_name": "TestAPIGatewayPOSTRequests",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayPOSTRequests::test_post_with_missing_body[myTestFunction2] PASSED [ 23%]"
+      },
+      {
+        "test_name": "TestAPIGatewayPOSTRequests",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayPOSTRequests::test_post_with_empty_body[myTestFunction2] PASSED [ 30%]"
+      },
+      {
+        "test_name": "TestAPIGatewayGETRequests",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayGETRequests::test_get_with_query_params[myTestFunction2] PASSED [ 38%]"
+      },
+      {
+        "test_name": "TestAPIGatewayGETRequests",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayGETRequests::test_get_without_query_params[myTestFunction2] PASSED [ 46%]"
+      },
+      {
+        "test_name": "TestAPIGatewayHeaders",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayHeaders::test_cors_headers_present[myTestFunction2] PASSED [ 53%]"
+      },
+      {
+        "test_name": "TestAPIGatewayHeaders",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayHeaders::test_content_type_json[myTestFunction2] PASSED [ 61%]"
+      },
+      {
+        "test_name": "TestAPIGatewayErrorHandling",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayErrorHandling::test_unsupported_http_method[myTestFunction2] PASSED [ 69%]"
+      },
+      {
+        "test_name": "TestAPIGatewayErrorHandling",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayErrorHandling::test_malformed_event[myTestFunction2] PASSED [ 76%]"
+      },
+      {
+        "test_name": "TestAPIGatewayErrorHandling",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayErrorHandling::test_large_payload[myTestFunction2] PASSED [ 84%]"
+      },
+      {
+        "test_name": "TestAPIGatewayResponseFormat",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayResponseFormat::test_response_has_required_fields[myTestFunction2] PASSED [ 92%]"
+      },
+      {
+        "test_name": "TestAPIGatewayResponseFormat",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayResponseFormat::test_response_body_is_string[myTestFunction2] PASSED [100%]"
+      },
+      {
+        "test_name": "TestCheckRuntimeVersions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_check_runtime_versions.py::TestCheckRuntimeVersions::test_main_with_enabled_functions PASSED [ 33%]"
+      },
+      {
+        "test_name": "TestCheckRuntimeVersions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_check_runtime_versions.py::TestCheckRuntimeVersions::test_main_with_missing_template PASSED [ 66%]"
+      },
+      {
+        "test_name": "TestCheckRuntimeVersions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_check_runtime_versions.py::TestCheckRuntimeVersions::test_main_displays_memory_info PASSED [100%]"
+      },
+      {
+        "test_name": "TestReadFile",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestReadFile::test_read_existing_file PASSED [  3%]"
+      },
+      {
+        "test_name": "TestReadFile",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestReadFile::test_read_nonexistent_file PASSED [  7%]"
+      },
+      {
+        "test_name": "TestReadFile",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestReadFile::test_read_file_with_unicode PASSED [ 11%]"
+      },
+      {
+        "test_name": "TestCountTotalOrDiffLines",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCountTotalOrDiffLines::test_both_files_missing PASSED [ 14%]"
+      },
+      {
+        "test_name": "TestCountTotalOrDiffLines",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCountTotalOrDiffLines::test_first_file_missing PASSED [ 18%]"
+      },
+      {
+        "test_name": "TestCountTotalOrDiffLines",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCountTotalOrDiffLines::test_second_file_missing PASSED [ 22%]"
+      },
+      {
+        "test_name": "TestCountTotalOrDiffLines",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCountTotalOrDiffLines::test_identical_files PASSED [ 25%]"
+      },
+      {
+        "test_name": "TestCountTotalOrDiffLines",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCountTotalOrDiffLines::test_different_files PASSED [ 29%]"
+      },
+      {
+        "test_name": "TestPrintSideBySide",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestPrintSideBySide::test_identical_content PASSED [ 33%]"
+      },
+      {
+        "test_name": "TestPrintSideBySide",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestPrintSideBySide::test_different_content PASSED [ 37%]"
+      },
+      {
+        "test_name": "TestPrintSideBySide",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestPrintSideBySide::test_with_file_output PASSED [ 40%]"
+      },
+      {
+        "test_name": "TestCompareFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCompareFunctions::test_compare_nonexistent_directories PASSED [ 44%]"
+      },
+      {
+        "test_name": "TestCompareFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCompareFunctions::test_compare_valid_directories PASSED [ 48%]"
+      },
+      {
+        "test_name": "TestCompareFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCompareFunctions::test_compare_with_identical_functions PASSED [ 51%]"
+      },
+      {
+        "test_name": "TestCompareFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCompareFunctions::test_compare_with_missing_files PASSED [ 55%]"
+      },
+      {
+        "test_name": "TestCompareFromConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCompareFromConfig::test_with_missing_config PASSED [ 59%]"
+      },
+      {
+        "test_name": "TestCompareFromConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCompareFromConfig::test_with_invalid_yaml PASSED [ 62%]"
+      },
+      {
+        "test_name": "TestCompareFromConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCompareFromConfig::test_with_empty_comparisons PASSED [ 66%]"
+      },
+      {
+        "test_name": "TestCompareFromConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCompareFromConfig::test_with_valid_comparisons PASSED [ 70%]"
+      },
+      {
+        "test_name": "TestCompareFromConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCompareFromConfig::test_with_missing_function_names PASSED [ 74%]"
+      },
+      {
+        "test_name": "TestValidateFunctionDirs",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestValidateFunctionDirs::test_with_valid_directories PASSED [ 77%]"
+      },
+      {
+        "test_name": "TestValidateFunctionDirs",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestValidateFunctionDirs::test_with_nonexistent_directory PASSED [ 81%]"
+      },
+      {
+        "test_name": "TestCollectFunctionFiles",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCollectFunctionFiles::test_collect_from_empty_directories PASSED [ 85%]"
+      },
+      {
+        "test_name": "TestCollectFunctionFiles",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCollectFunctionFiles::test_collect_excludes_build_dirs PASSED [ 88%]"
+      },
+      {
+        "test_name": "TestCollectFunctionFiles",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCollectFunctionFiles::test_collect_from_multiple_directories PASSED [ 92%]"
+      },
+      {
+        "test_name": "TestGeneratePdfReport",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestGeneratePdfReport::test_generate_pdf_basic PASSED [ 96%]"
+      },
+      {
+        "test_name": "TestGeneratePdfReport",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestGeneratePdfReport::test_generate_pdf_with_differences PASSED [100%]"
+      },
+      {
+        "test_name": "TestLambdaDeployerInit",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestLambdaDeployerInit::test_init_with_valid_config PASSED [  3%]"
+      },
+      {
+        "test_name": "TestLambdaDeployerInit",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestLambdaDeployerInit::test_init_with_missing_config PASSED [  7%]"
+      },
+      {
+        "test_name": "TestLambdaDeployerInit",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestLambdaDeployerInit::test_init_with_invalid_yaml PASSED [ 11%]"
+      },
+      {
+        "test_name": "TestValidateLambdaLimits",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestValidateLambdaLimits::test_valid_memory_and_timeout PASSED [ 14%]"
+      },
+      {
+        "test_name": "TestValidateLambdaLimits",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestValidateLambdaLimits::test_invalid_memory_too_low PASSED [ 18%]"
+      },
+      {
+        "test_name": "TestValidateLambdaLimits",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestValidateLambdaLimits::test_invalid_memory_too_high PASSED [ 22%]"
+      },
+      {
+        "test_name": "TestValidateLambdaLimits",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestValidateLambdaLimits::test_invalid_timeout_too_low PASSED [ 25%]"
+      },
+      {
+        "test_name": "TestValidateLambdaLimits",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestValidateLambdaLimits::test_invalid_timeout_too_high PASSED [ 29%]"
+      },
+      {
+        "test_name": "TestPackageFunction",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestPackageFunction::test_package_function_success PASSED [ 33%]"
+      },
+      {
+        "test_name": "TestPackageFunction",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestPackageFunction::test_package_function_missing_directory PASSED [ 37%]"
+      },
+      {
+        "test_name": "TestPackageFunction",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestPackageFunction::test_package_function_creates_zip PASSED [ 40%]"
+      },
+      {
+        "test_name": "TestGenerateDeploymentConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestGenerateDeploymentConfig::test_generate_config_basic PASSED [ 44%]"
+      },
+      {
+        "test_name": "TestGenerateDeploymentConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestGenerateDeploymentConfig::test_generate_config_filters_disabled_functions PASSED [ 48%]"
+      },
+      {
+        "test_name": "TestGenerateDeploymentConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestGenerateDeploymentConfig::test_generate_config_filters_aws_env_vars PASSED [ 51%]"
+      },
+      {
+        "test_name": "TestApplyTerraform",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestApplyTerraform::test_apply_terraform_init_failure PASSED [ 55%]"
+      },
+      {
+        "test_name": "TestApplyTerraform",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestApplyTerraform::test_apply_terraform_plan_failure PASSED [ 59%]"
+      },
+      {
+        "test_name": "TestApplyTerraform",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestApplyTerraform::test_apply_terraform_user_cancels PASSED [ 62%]"
+      },
+      {
+        "test_name": "TestRollbackDeployment",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestRollbackDeployment::test_rollback_with_no_state PASSED [ 66%]"
+      },
+      {
+        "test_name": "TestRollbackDeployment",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestRollbackDeployment::test_rollback_success PASSED [ 70%]"
+      },
+      {
+        "test_name": "TestCheckExistingFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestCheckExistingFunctions::test_check_existing_functions_found PASSED [ 74%]"
+      },
+      {
+        "test_name": "TestCheckExistingFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestCheckExistingFunctions::test_check_existing_functions_not_found PASSED [ 77%]"
+      },
+      {
+        "test_name": "TestValidateTerraformVars",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestValidateTerraformVars::test_validate_valid_function_names PASSED [ 81%]"
+      },
+      {
+        "test_name": "TestValidateTerraformVars",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestValidateTerraformVars::test_validate_invalid_function_name PASSED [ 85%]"
+      },
+      {
+        "test_name": "TestValidateTerraformVars",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestValidateTerraformVars::test_validate_invalid_env_var_name PASSED [ 88%]"
+      },
+      {
+        "test_name": "TestRunCommand",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestRunCommand::test_run_command_success PASSED [ 92%]"
+      },
+      {
+        "test_name": "TestRunCommand",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestRunCommand::test_run_command_failure_with_check PASSED [ 96%]"
+      },
+      {
+        "test_name": "TestRunCommand",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestRunCommand::test_run_command_timeout PASSED [100%]"
+      },
+      {
+        "test_name": "TestErrorScenarios",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestErrorScenarios::test_handler_with_invalid_event[myTestFunction1] PASSED [  4%]"
+      },
+      {
+        "test_name": "TestErrorScenarios",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestErrorScenarios::test_handler_with_invalid_event[myTestFunction2] PASSED [  8%]"
+      },
+      {
+        "test_name": "TestErrorScenarios",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestErrorScenarios::test_handler_with_aws_service_errors[myTestFunction1] PASSED [ 12%]"
+      },
+      {
+        "test_name": "TestErrorScenarios",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestErrorScenarios::test_handler_with_aws_service_errors[myTestFunction2] PASSED [ 16%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_config_valid[myTestFunction1] PASSED [ 20%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_config_valid[myTestFunction2] PASSED [ 25%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_file_exists[myTestFunction1] PASSED [ 29%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_file_exists[myTestFunction2] PASSED [ 33%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_template_exists[myTestFunction1] PASSED [ 37%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_template_exists[myTestFunction2] PASSED [ 41%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_handler_exists[myTestFunction1] PASSED [ 45%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_handler_exists[myTestFunction2] PASSED [ 50%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_runtime_is_latest[myTestFunction1] PASSED [ 54%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_runtime_is_latest[myTestFunction2] PASSED [ 58%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_template_uses_python314[myTestFunction1] PASSED [ 62%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_template_uses_python314[myTestFunction2] PASSED [ 66%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_requirements_python314_compatible[myTestFunction1] PASSED [ 70%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_requirements_python314_compatible[myTestFunction2] PASSED [ 75%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_python314_syntax_compatibility[myTestFunction1] PASSED [ 79%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_python314_syntax_compatibility[myTestFunction2] PASSED [ 83%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_lambda_function_trigger_mock[myTestFunction1] PASSED [ 87%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_lambda_function_trigger_mock[myTestFunction2] PASSED [ 91%]"
+      },
+      {
+        "test_name": "TestLocalExecution",
+        "status": "SKIPPED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestLocalExecution::test_sam_build_succeeds[myTestFunction1] SKIPPED [ 95%]"
+      },
+      {
+        "test_name": "TestLocalExecution",
+        "status": "SKIPPED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestLocalExecution::test_sam_build_succeeds[myTestFunction2] SKIPPED [100%]"
+      },
+      {
+        "test_name": "TestS3TriggerProcessingStorage",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerProcessingStorage::test_successful_trigger_and_processing[myTestFunction1] PASSED [  5%]"
+      },
+      {
+        "test_name": "TestS3TriggerProcessingStorage",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerProcessingStorage::test_multiple_file_types[myTestFunction1] PASSED [ 11%]"
+      },
+      {
+        "test_name": "TestS3TriggerProcessingStorage",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerProcessingStorage::test_large_file_processing[myTestFunction1] PASSED [ 17%]"
+      },
+      {
+        "test_name": "TestS3TriggerProcessingStorage",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerProcessingStorage::test_unicode_content_processing[myTestFunction1] PASSED [ 23%]"
+      },
+      {
+        "test_name": "TestS3TriggerProcessingStorage",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerProcessingStorage::test_empty_file_handling[myTestFunction1] PASSED [ 29%]"
+      },
+      {
+        "test_name": "TestS3TriggerErrorHandling",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerErrorHandling::test_invalid_event_structure[myTestFunction1] PASSED [ 35%]"
+      },
+      {
+        "test_name": "TestS3TriggerErrorHandling",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerErrorHandling::test_missing_source_bucket[myTestFunction1] PASSED [ 41%]"
+      },
+      {
+        "test_name": "TestS3TriggerErrorHandling",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerErrorHandling::test_missing_object_key[myTestFunction1] PASSED [ 47%]"
+      },
+      {
+        "test_name": "TestS3TriggerErrorHandling",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerErrorHandling::test_missing_destination_bucket[myTestFunction1] PASSED [ 52%]"
+      },
+      {
+        "test_name": "TestS3TriggerErrorHandling",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerErrorHandling::test_binary_file_handling[myTestFunction1] PASSED [ 58%]"
+      },
+      {
+        "test_name": "TestS3TriggerConfiguration",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerConfiguration::test_function_has_s3_trigger_config[myTestFunction1] PASSED [ 64%]"
+      },
+      {
+        "test_name": "TestS3TriggerConfiguration",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerConfiguration::test_function_has_environment_variables[myTestFunction1] PASSED [ 70%]"
+      },
+      {
+        "test_name": "TestS3TriggerConfiguration",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerConfiguration::test_environment_variable_override[myTestFunction1] PASSED [ 76%]"
+      },
+      {
+        "test_name": "TestS3TriggerPerformance",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerPerformance::test_execution_time_within_timeout[myTestFunction1] PASSED [ 82%]"
+      },
+      {
+        "test_name": "TestS3TriggerPerformance",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerPerformance::test_multiple_sequential_invocations[myTestFunction1] PASSED [ 88%]"
+      },
+      {
+        "test_name": "TestGenericS3TriggerFunction",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestGenericS3TriggerFunction::test_s3_trigger_basic_workflow[myTestFunction1] PASSED [ 94%]"
+      },
+      {
+        "test_name": "TestGenericS3TriggerFunction",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestGenericS3TriggerFunction::test_s3_trigger_config_valid[myTestFunction1] PASSED [100%]"
+      },
+      {
+        "test_name": "TestSanitizeError",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestSanitizeError::test_sanitize_aws_access_key PASSED [  3%]"
+      },
+      {
+        "test_name": "TestSanitizeError",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestSanitizeError::test_sanitize_aws_secret PASSED [  6%]"
+      },
+      {
+        "test_name": "TestSanitizeError",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestSanitizeError::test_sanitize_no_credentials PASSED [ 10%]"
+      },
+      {
+        "test_name": "TestLambdaUpgraderInit",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestLambdaUpgraderInit::test_init_with_valid_config PASSED [ 13%]"
+      },
+      {
+        "test_name": "TestLambdaUpgraderInit",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestLambdaUpgraderInit::test_init_with_missing_config PASSED [ 17%]"
+      },
+      {
+        "test_name": "TestLambdaUpgraderInit",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestLambdaUpgraderInit::test_init_with_invalid_yaml PASSED [ 20%]"
+      },
+      {
+        "test_name": "TestValidateConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestValidateConfig::test_validate_missing_functions_field PASSED [ 24%]"
+      },
+      {
+        "test_name": "TestValidateConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestValidateConfig::test_validate_missing_function_fields PASSED [ 27%]"
+      },
+      {
+        "test_name": "TestValidateConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestValidateConfig::test_validate_valid_config PASSED [ 31%]"
+      },
+      {
+        "test_name": "TestUpdateTemplateYaml",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestUpdateTemplateYaml::test_update_template_runtime PASSED [ 34%]"
+      },
+      {
+        "test_name": "TestUpdateTemplateYaml",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestUpdateTemplateYaml::test_update_template_missing_file PASSED [ 37%]"
+      },
+      {
+        "test_name": "TestUpdateRequirements",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestUpdateRequirements::test_update_existing_requirements PASSED [ 41%]"
+      },
+      {
+        "test_name": "TestUpdateRequirements",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestUpdateRequirements::test_create_missing_requirements PASSED [ 44%]"
+      },
+      {
+        "test_name": "TestFixPython314Syntax",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestFixPython314Syntax::test_fix_deprecated_imp_module PASSED [ 48%]"
+      },
+      {
+        "test_name": "TestFixPython314Syntax",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestFixPython314Syntax::test_fix_deprecated_collections PASSED [ 51%]"
+      },
+      {
+        "test_name": "TestFixPython314Syntax",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestFixPython314Syntax::test_fix_syntax_with_valid_code PASSED [ 55%]"
+      },
+      {
+        "test_name": "TestFixPython314Syntax",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestFixPython314Syntax::test_fix_syntax_with_invalid_code PASSED [ 58%]"
+      },
+      {
+        "test_name": "TestFixPython314Syntax",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestFixPython314Syntax::test_fix_syntax_missing_file PASSED [ 62%]"
+      },
+      {
+        "test_name": "TestUpgradeFunction",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestUpgradeFunction::test_upgrade_function_success PASSED [ 65%]"
+      },
+      {
+        "test_name": "TestUpgradeFunction",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestUpgradeFunction::test_upgrade_function_syntax_fix_failure PASSED [ 68%]"
+      },
+      {
+        "test_name": "TestUpgradeFunction",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestUpgradeFunction::test_upgrade_function_sam_not_available PASSED [ 72%]"
+      },
+      {
+        "test_name": "TestUpgradeAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestUpgradeAllFunctions::test_upgrade_all_enabled_functions PASSED [ 75%]"
+      },
+      {
+        "test_name": "TestUpgradeAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestUpgradeAllFunctions::test_upgrade_all_with_failures PASSED [ 79%]"
+      },
+      {
+        "test_name": "TestGenerateTerraformVariables",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestGenerateTerraformVariables::test_generate_terraform_vars PASSED [ 82%]"
+      },
+      {
+        "test_name": "TestReportResults",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestReportResults::test_report_all_success PASSED [ 86%]"
+      },
+      {
+        "test_name": "TestReportResults",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestReportResults::test_report_with_failures PASSED [ 89%]"
+      },
+      {
+        "test_name": "TestRunCommand",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestRunCommand::test_run_command_success PASSED [ 93%]"
+      },
+      {
+        "test_name": "TestRunCommand",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestRunCommand::test_run_command_failure PASSED [ 96%]"
+      },
+      {
+        "test_name": "TestRunCommand",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestRunCommand::test_run_command_timeout PASSED [100%]"
+      }
+    ],
+    "function2": [
+      {
+        "test_name": "TestAPIGatewayPOSTRequests",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayPOSTRequests::test_post_with_valid_json[myTestFunction2] PASSED [  7%]"
+      },
+      {
+        "test_name": "TestAPIGatewayPOSTRequests",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayPOSTRequests::test_post_with_invalid_json[myTestFunction2] PASSED [ 15%]"
+      },
+      {
+        "test_name": "TestAPIGatewayPOSTRequests",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayPOSTRequests::test_post_with_missing_body[myTestFunction2] PASSED [ 23%]"
+      },
+      {
+        "test_name": "TestAPIGatewayPOSTRequests",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayPOSTRequests::test_post_with_empty_body[myTestFunction2] PASSED [ 30%]"
+      },
+      {
+        "test_name": "TestAPIGatewayGETRequests",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayGETRequests::test_get_with_query_params[myTestFunction2] PASSED [ 38%]"
+      },
+      {
+        "test_name": "TestAPIGatewayGETRequests",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayGETRequests::test_get_without_query_params[myTestFunction2] PASSED [ 46%]"
+      },
+      {
+        "test_name": "TestAPIGatewayHeaders",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayHeaders::test_cors_headers_present[myTestFunction2] PASSED [ 53%]"
+      },
+      {
+        "test_name": "TestAPIGatewayHeaders",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayHeaders::test_content_type_json[myTestFunction2] PASSED [ 61%]"
+      },
+      {
+        "test_name": "TestAPIGatewayErrorHandling",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayErrorHandling::test_unsupported_http_method[myTestFunction2] PASSED [ 69%]"
+      },
+      {
+        "test_name": "TestAPIGatewayErrorHandling",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayErrorHandling::test_malformed_event[myTestFunction2] PASSED [ 76%]"
+      },
+      {
+        "test_name": "TestAPIGatewayErrorHandling",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayErrorHandling::test_large_payload[myTestFunction2] PASSED [ 84%]"
+      },
+      {
+        "test_name": "TestAPIGatewayResponseFormat",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayResponseFormat::test_response_has_required_fields[myTestFunction2] PASSED [ 92%]"
+      },
+      {
+        "test_name": "TestAPIGatewayResponseFormat",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_api_gateway_trigger_functions.py::TestAPIGatewayResponseFormat::test_response_body_is_string[myTestFunction2] PASSED [100%]"
+      },
+      {
+        "test_name": "TestCheckRuntimeVersions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_check_runtime_versions.py::TestCheckRuntimeVersions::test_main_with_enabled_functions PASSED [ 33%]"
+      },
+      {
+        "test_name": "TestCheckRuntimeVersions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_check_runtime_versions.py::TestCheckRuntimeVersions::test_main_with_missing_template PASSED [ 66%]"
+      },
+      {
+        "test_name": "TestCheckRuntimeVersions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_check_runtime_versions.py::TestCheckRuntimeVersions::test_main_displays_memory_info PASSED [100%]"
+      },
+      {
+        "test_name": "TestReadFile",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestReadFile::test_read_existing_file PASSED [  3%]"
+      },
+      {
+        "test_name": "TestReadFile",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestReadFile::test_read_nonexistent_file PASSED [  7%]"
+      },
+      {
+        "test_name": "TestReadFile",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestReadFile::test_read_file_with_unicode PASSED [ 11%]"
+      },
+      {
+        "test_name": "TestCountTotalOrDiffLines",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCountTotalOrDiffLines::test_both_files_missing PASSED [ 14%]"
+      },
+      {
+        "test_name": "TestCountTotalOrDiffLines",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCountTotalOrDiffLines::test_first_file_missing PASSED [ 18%]"
+      },
+      {
+        "test_name": "TestCountTotalOrDiffLines",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCountTotalOrDiffLines::test_second_file_missing PASSED [ 22%]"
+      },
+      {
+        "test_name": "TestCountTotalOrDiffLines",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCountTotalOrDiffLines::test_identical_files PASSED [ 25%]"
+      },
+      {
+        "test_name": "TestCountTotalOrDiffLines",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCountTotalOrDiffLines::test_different_files PASSED [ 29%]"
+      },
+      {
+        "test_name": "TestPrintSideBySide",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestPrintSideBySide::test_identical_content PASSED [ 33%]"
+      },
+      {
+        "test_name": "TestPrintSideBySide",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestPrintSideBySide::test_different_content PASSED [ 37%]"
+      },
+      {
+        "test_name": "TestPrintSideBySide",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestPrintSideBySide::test_with_file_output PASSED [ 40%]"
+      },
+      {
+        "test_name": "TestCompareFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCompareFunctions::test_compare_nonexistent_directories PASSED [ 44%]"
+      },
+      {
+        "test_name": "TestCompareFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCompareFunctions::test_compare_valid_directories PASSED [ 48%]"
+      },
+      {
+        "test_name": "TestCompareFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCompareFunctions::test_compare_with_identical_functions PASSED [ 51%]"
+      },
+      {
+        "test_name": "TestCompareFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCompareFunctions::test_compare_with_missing_files PASSED [ 55%]"
+      },
+      {
+        "test_name": "TestCompareFromConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCompareFromConfig::test_with_missing_config PASSED [ 59%]"
+      },
+      {
+        "test_name": "TestCompareFromConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCompareFromConfig::test_with_invalid_yaml PASSED [ 62%]"
+      },
+      {
+        "test_name": "TestCompareFromConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCompareFromConfig::test_with_empty_comparisons PASSED [ 66%]"
+      },
+      {
+        "test_name": "TestCompareFromConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCompareFromConfig::test_with_valid_comparisons PASSED [ 70%]"
+      },
+      {
+        "test_name": "TestCompareFromConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCompareFromConfig::test_with_missing_function_names PASSED [ 74%]"
+      },
+      {
+        "test_name": "TestValidateFunctionDirs",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestValidateFunctionDirs::test_with_valid_directories PASSED [ 77%]"
+      },
+      {
+        "test_name": "TestValidateFunctionDirs",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestValidateFunctionDirs::test_with_nonexistent_directory PASSED [ 81%]"
+      },
+      {
+        "test_name": "TestCollectFunctionFiles",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCollectFunctionFiles::test_collect_from_empty_directories PASSED [ 85%]"
+      },
+      {
+        "test_name": "TestCollectFunctionFiles",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCollectFunctionFiles::test_collect_excludes_build_dirs PASSED [ 88%]"
+      },
+      {
+        "test_name": "TestCollectFunctionFiles",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestCollectFunctionFiles::test_collect_from_multiple_directories PASSED [ 92%]"
+      },
+      {
+        "test_name": "TestGeneratePdfReport",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestGeneratePdfReport::test_generate_pdf_basic PASSED [ 96%]"
+      },
+      {
+        "test_name": "TestGeneratePdfReport",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_compare_lambda_functions.py::TestGeneratePdfReport::test_generate_pdf_with_differences PASSED [100%]"
+      },
+      {
+        "test_name": "TestLambdaDeployerInit",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestLambdaDeployerInit::test_init_with_valid_config PASSED [  3%]"
+      },
+      {
+        "test_name": "TestLambdaDeployerInit",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestLambdaDeployerInit::test_init_with_missing_config PASSED [  7%]"
+      },
+      {
+        "test_name": "TestLambdaDeployerInit",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestLambdaDeployerInit::test_init_with_invalid_yaml PASSED [ 11%]"
+      },
+      {
+        "test_name": "TestValidateLambdaLimits",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestValidateLambdaLimits::test_valid_memory_and_timeout PASSED [ 14%]"
+      },
+      {
+        "test_name": "TestValidateLambdaLimits",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestValidateLambdaLimits::test_invalid_memory_too_low PASSED [ 18%]"
+      },
+      {
+        "test_name": "TestValidateLambdaLimits",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestValidateLambdaLimits::test_invalid_memory_too_high PASSED [ 22%]"
+      },
+      {
+        "test_name": "TestValidateLambdaLimits",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestValidateLambdaLimits::test_invalid_timeout_too_low PASSED [ 25%]"
+      },
+      {
+        "test_name": "TestValidateLambdaLimits",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestValidateLambdaLimits::test_invalid_timeout_too_high PASSED [ 29%]"
+      },
+      {
+        "test_name": "TestPackageFunction",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestPackageFunction::test_package_function_success PASSED [ 33%]"
+      },
+      {
+        "test_name": "TestPackageFunction",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestPackageFunction::test_package_function_missing_directory PASSED [ 37%]"
+      },
+      {
+        "test_name": "TestPackageFunction",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestPackageFunction::test_package_function_creates_zip PASSED [ 40%]"
+      },
+      {
+        "test_name": "TestGenerateDeploymentConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestGenerateDeploymentConfig::test_generate_config_basic PASSED [ 44%]"
+      },
+      {
+        "test_name": "TestGenerateDeploymentConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestGenerateDeploymentConfig::test_generate_config_filters_disabled_functions PASSED [ 48%]"
+      },
+      {
+        "test_name": "TestGenerateDeploymentConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestGenerateDeploymentConfig::test_generate_config_filters_aws_env_vars PASSED [ 51%]"
+      },
+      {
+        "test_name": "TestApplyTerraform",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestApplyTerraform::test_apply_terraform_init_failure PASSED [ 55%]"
+      },
+      {
+        "test_name": "TestApplyTerraform",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestApplyTerraform::test_apply_terraform_plan_failure PASSED [ 59%]"
+      },
+      {
+        "test_name": "TestApplyTerraform",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestApplyTerraform::test_apply_terraform_user_cancels PASSED [ 62%]"
+      },
+      {
+        "test_name": "TestRollbackDeployment",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestRollbackDeployment::test_rollback_with_no_state PASSED [ 66%]"
+      },
+      {
+        "test_name": "TestRollbackDeployment",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestRollbackDeployment::test_rollback_success PASSED [ 70%]"
+      },
+      {
+        "test_name": "TestCheckExistingFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestCheckExistingFunctions::test_check_existing_functions_found PASSED [ 74%]"
+      },
+      {
+        "test_name": "TestCheckExistingFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestCheckExistingFunctions::test_check_existing_functions_not_found PASSED [ 77%]"
+      },
+      {
+        "test_name": "TestValidateTerraformVars",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestValidateTerraformVars::test_validate_valid_function_names PASSED [ 81%]"
+      },
+      {
+        "test_name": "TestValidateTerraformVars",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestValidateTerraformVars::test_validate_invalid_function_name PASSED [ 85%]"
+      },
+      {
+        "test_name": "TestValidateTerraformVars",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestValidateTerraformVars::test_validate_invalid_env_var_name PASSED [ 88%]"
+      },
+      {
+        "test_name": "TestRunCommand",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestRunCommand::test_run_command_success PASSED [ 92%]"
+      },
+      {
+        "test_name": "TestRunCommand",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestRunCommand::test_run_command_failure_with_check PASSED [ 96%]"
+      },
+      {
+        "test_name": "TestRunCommand",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_deploy_lambda_functions.py::TestRunCommand::test_run_command_timeout PASSED [100%]"
+      },
+      {
+        "test_name": "TestErrorScenarios",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestErrorScenarios::test_handler_with_invalid_event[myTestFunction1] PASSED [  4%]"
+      },
+      {
+        "test_name": "TestErrorScenarios",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestErrorScenarios::test_handler_with_invalid_event[myTestFunction2] PASSED [  8%]"
+      },
+      {
+        "test_name": "TestErrorScenarios",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestErrorScenarios::test_handler_with_aws_service_errors[myTestFunction1] PASSED [ 12%]"
+      },
+      {
+        "test_name": "TestErrorScenarios",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestErrorScenarios::test_handler_with_aws_service_errors[myTestFunction2] PASSED [ 16%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_config_valid[myTestFunction1] PASSED [ 20%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_config_valid[myTestFunction2] PASSED [ 25%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_file_exists[myTestFunction1] PASSED [ 29%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_file_exists[myTestFunction2] PASSED [ 33%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_template_exists[myTestFunction1] PASSED [ 37%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_template_exists[myTestFunction2] PASSED [ 41%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_handler_exists[myTestFunction1] PASSED [ 45%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_handler_exists[myTestFunction2] PASSED [ 50%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_runtime_is_latest[myTestFunction1] PASSED [ 54%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_function_runtime_is_latest[myTestFunction2] PASSED [ 58%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_template_uses_python314[myTestFunction1] PASSED [ 62%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_template_uses_python314[myTestFunction2] PASSED [ 66%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_requirements_python314_compatible[myTestFunction1] PASSED [ 70%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_requirements_python314_compatible[myTestFunction2] PASSED [ 75%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_python314_syntax_compatibility[myTestFunction1] PASSED [ 79%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_python314_syntax_compatibility[myTestFunction2] PASSED [ 83%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_lambda_function_trigger_mock[myTestFunction1] PASSED [ 87%]"
+      },
+      {
+        "test_name": "TestAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestAllFunctions::test_lambda_function_trigger_mock[myTestFunction2] PASSED [ 91%]"
+      },
+      {
+        "test_name": "TestLocalExecution",
+        "status": "SKIPPED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestLocalExecution::test_sam_build_succeeds[myTestFunction1] SKIPPED [ 95%]"
+      },
+      {
+        "test_name": "TestLocalExecution",
+        "status": "SKIPPED",
+        "duration": 0.0,
+        "message": "tests/test_lambda_functions.py::TestLocalExecution::test_sam_build_succeeds[myTestFunction2] SKIPPED [100%]"
+      },
+      {
+        "test_name": "TestS3TriggerProcessingStorage",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerProcessingStorage::test_successful_trigger_and_processing[myTestFunction1] PASSED [  5%]"
+      },
+      {
+        "test_name": "TestS3TriggerProcessingStorage",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerProcessingStorage::test_multiple_file_types[myTestFunction1] PASSED [ 11%]"
+      },
+      {
+        "test_name": "TestS3TriggerProcessingStorage",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerProcessingStorage::test_large_file_processing[myTestFunction1] PASSED [ 17%]"
+      },
+      {
+        "test_name": "TestS3TriggerProcessingStorage",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerProcessingStorage::test_unicode_content_processing[myTestFunction1] PASSED [ 23%]"
+      },
+      {
+        "test_name": "TestS3TriggerProcessingStorage",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerProcessingStorage::test_empty_file_handling[myTestFunction1] PASSED [ 29%]"
+      },
+      {
+        "test_name": "TestS3TriggerErrorHandling",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerErrorHandling::test_invalid_event_structure[myTestFunction1] PASSED [ 35%]"
+      },
+      {
+        "test_name": "TestS3TriggerErrorHandling",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerErrorHandling::test_missing_source_bucket[myTestFunction1] PASSED [ 41%]"
+      },
+      {
+        "test_name": "TestS3TriggerErrorHandling",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerErrorHandling::test_missing_object_key[myTestFunction1] PASSED [ 47%]"
+      },
+      {
+        "test_name": "TestS3TriggerErrorHandling",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerErrorHandling::test_missing_destination_bucket[myTestFunction1] PASSED [ 52%]"
+      },
+      {
+        "test_name": "TestS3TriggerErrorHandling",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerErrorHandling::test_binary_file_handling[myTestFunction1] PASSED [ 58%]"
+      },
+      {
+        "test_name": "TestS3TriggerConfiguration",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerConfiguration::test_function_has_s3_trigger_config[myTestFunction1] PASSED [ 64%]"
+      },
+      {
+        "test_name": "TestS3TriggerConfiguration",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerConfiguration::test_function_has_environment_variables[myTestFunction1] PASSED [ 70%]"
+      },
+      {
+        "test_name": "TestS3TriggerConfiguration",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerConfiguration::test_environment_variable_override[myTestFunction1] PASSED [ 76%]"
+      },
+      {
+        "test_name": "TestS3TriggerPerformance",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerPerformance::test_execution_time_within_timeout[myTestFunction1] PASSED [ 82%]"
+      },
+      {
+        "test_name": "TestS3TriggerPerformance",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestS3TriggerPerformance::test_multiple_sequential_invocations[myTestFunction1] PASSED [ 88%]"
+      },
+      {
+        "test_name": "TestGenericS3TriggerFunction",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestGenericS3TriggerFunction::test_s3_trigger_basic_workflow[myTestFunction1] PASSED [ 94%]"
+      },
+      {
+        "test_name": "TestGenericS3TriggerFunction",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_s3_trigger_functions.py::TestGenericS3TriggerFunction::test_s3_trigger_config_valid[myTestFunction1] PASSED [100%]"
+      },
+      {
+        "test_name": "TestSanitizeError",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestSanitizeError::test_sanitize_aws_access_key PASSED [  3%]"
+      },
+      {
+        "test_name": "TestSanitizeError",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestSanitizeError::test_sanitize_aws_secret PASSED [  6%]"
+      },
+      {
+        "test_name": "TestSanitizeError",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestSanitizeError::test_sanitize_no_credentials PASSED [ 10%]"
+      },
+      {
+        "test_name": "TestLambdaUpgraderInit",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestLambdaUpgraderInit::test_init_with_valid_config PASSED [ 13%]"
+      },
+      {
+        "test_name": "TestLambdaUpgraderInit",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestLambdaUpgraderInit::test_init_with_missing_config PASSED [ 17%]"
+      },
+      {
+        "test_name": "TestLambdaUpgraderInit",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestLambdaUpgraderInit::test_init_with_invalid_yaml PASSED [ 20%]"
+      },
+      {
+        "test_name": "TestValidateConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestValidateConfig::test_validate_missing_functions_field PASSED [ 24%]"
+      },
+      {
+        "test_name": "TestValidateConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestValidateConfig::test_validate_missing_function_fields PASSED [ 27%]"
+      },
+      {
+        "test_name": "TestValidateConfig",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestValidateConfig::test_validate_valid_config PASSED [ 31%]"
+      },
+      {
+        "test_name": "TestUpdateTemplateYaml",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestUpdateTemplateYaml::test_update_template_runtime PASSED [ 34%]"
+      },
+      {
+        "test_name": "TestUpdateTemplateYaml",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestUpdateTemplateYaml::test_update_template_missing_file PASSED [ 37%]"
+      },
+      {
+        "test_name": "TestUpdateRequirements",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestUpdateRequirements::test_update_existing_requirements PASSED [ 41%]"
+      },
+      {
+        "test_name": "TestUpdateRequirements",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestUpdateRequirements::test_create_missing_requirements PASSED [ 44%]"
+      },
+      {
+        "test_name": "TestFixPython314Syntax",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestFixPython314Syntax::test_fix_deprecated_imp_module PASSED [ 48%]"
+      },
+      {
+        "test_name": "TestFixPython314Syntax",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestFixPython314Syntax::test_fix_deprecated_collections PASSED [ 51%]"
+      },
+      {
+        "test_name": "TestFixPython314Syntax",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestFixPython314Syntax::test_fix_syntax_with_valid_code PASSED [ 55%]"
+      },
+      {
+        "test_name": "TestFixPython314Syntax",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestFixPython314Syntax::test_fix_syntax_with_invalid_code PASSED [ 58%]"
+      },
+      {
+        "test_name": "TestFixPython314Syntax",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestFixPython314Syntax::test_fix_syntax_missing_file PASSED [ 62%]"
+      },
+      {
+        "test_name": "TestUpgradeFunction",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestUpgradeFunction::test_upgrade_function_success PASSED [ 65%]"
+      },
+      {
+        "test_name": "TestUpgradeFunction",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestUpgradeFunction::test_upgrade_function_syntax_fix_failure PASSED [ 68%]"
+      },
+      {
+        "test_name": "TestUpgradeFunction",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestUpgradeFunction::test_upgrade_function_sam_not_available PASSED [ 72%]"
+      },
+      {
+        "test_name": "TestUpgradeAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestUpgradeAllFunctions::test_upgrade_all_enabled_functions PASSED [ 75%]"
+      },
+      {
+        "test_name": "TestUpgradeAllFunctions",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestUpgradeAllFunctions::test_upgrade_all_with_failures PASSED [ 79%]"
+      },
+      {
+        "test_name": "TestGenerateTerraformVariables",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestGenerateTerraformVariables::test_generate_terraform_vars PASSED [ 82%]"
+      },
+      {
+        "test_name": "TestReportResults",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestReportResults::test_report_all_success PASSED [ 86%]"
+      },
+      {
+        "test_name": "TestReportResults",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestReportResults::test_report_with_failures PASSED [ 89%]"
+      },
+      {
+        "test_name": "TestRunCommand",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestRunCommand::test_run_command_success PASSED [ 93%]"
+      },
+      {
+        "test_name": "TestRunCommand",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestRunCommand::test_run_command_failure PASSED [ 96%]"
+      },
+      {
+        "test_name": "TestRunCommand",
+        "status": "PASSED",
+        "duration": 0.0,
+        "message": "tests/test_upgrade_lambda_runtime.py::TestRunCommand::test_run_command_timeout PASSED [100%]"
+      }
+    ],
+    "summary": {
+      "function1_passed": 138,
+      "function1_failed": 0,
+      "function1_total": 140,
+      "function2_passed": 138,
+      "function2_failed": 0,
+      "function2_total": 140,
+      "reliability_difference": 0
+    }
+  },
+  "event_sources": {
+    "function1": [
+      "S3"
+    ],
+    "function2": [
+      "Direct Invocation"
+    ],
+    "differences": [
+      "Direct Invocation",
+      "S3"
+    ]
+  }
+}

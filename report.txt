@@ -1,0 +1,60 @@
+================================================================================
+AWS Lambda Function ATS-Level Comparison Report
+================================================================================
+
+Generated: 2026-02-23T15:46:43.148713
+Function 1: myTestFunction1
+Function 2: myTestFunction2
+
+
+--------------------------------------------------------------------------------
+CONFIGURATION COMPARISON
+--------------------------------------------------------------------------------
+
+[ ] name (MINOR)
+  myTestFunction1: myTestFunction1
+  myTestFunction2: myTestFunction2
+
+[ ] description (MINOR)
+  myTestFunction1: Test function 1 - S3 read operations testing
+  myTestFunction2: Test function 2
+
+--------------------------------------------------------------------------------
+DEPENDENCIES COMPARISON
+--------------------------------------------------------------------------------
+
+myTestFunction1: 1 packages
+myTestFunction2: 1 packages
+Difference: 0 packages
+
+--------------------------------------------------------------------------------
+PERFORMANCE METRICS
+--------------------------------------------------------------------------------
+
+Estimated Cold Start Time:
+  myTestFunction1: 1005 ms
+  myTestFunction2: 1005 ms
+
+Code Complexity:
+  myTestFunction1: 8.8/100
+  myTestFunction2: 5.8/100
+
+--------------------------------------------------------------------------------
+EVENT SOURCES & TRIGGERS
+--------------------------------------------------------------------------------
+
+myTestFunction1: S3
+myTestFunction2: Direct Invocation
+
+Due to differences in supported triggers:
+  * Direct Invocation
+  * S3
+
+--------------------------------------------------------------------------------
+TEST RESULTS
+--------------------------------------------------------------------------------
+
+myTestFunction1: 138/140 passed
+myTestFunction2: 138/140 passed
+
+================================================================================

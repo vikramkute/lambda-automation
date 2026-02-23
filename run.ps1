@@ -109,8 +109,10 @@ function Show-Help {
     Write-Host "  check-runtime-version  Check runtime versions of all functions"
     Write-Host "  upgrade                Upgrade all Lambda functions to latest Python version"
     Write-Host "  build                  Build all Lambda functions"
-    Write-Host "  compare [func1] [func2] Compare two Lambda functions"
+    Write-Host "  compare [f1] [f2] Compare two Lambda functions"
     Write-Host "  compare-config         Compare functions from comparison.config.yaml"
+    Write-Host "  compare-ats [f1] [f2]  Compare functions at ATS level (Application Test Suite)"
+    Write-Host "  compare-ats-config     ATS compare from comparison.config.yaml"
     Write-Host "  test                   Run full test suite with SAM"
     Write-Host "  test-fast              Run fast test suite (no SAM build)"
     Write-Host "  init-terraform         Initialize Terraform"
@@ -129,6 +131,8 @@ function Show-Help {
     Write-Host "  $ScriptName upgrade"
     Write-Host "  $ScriptName compare myTestFunction1 myTestFunction2"
     Write-Host "  $ScriptName compare-config"
+    Write-Host "  $ScriptName compare-ats myTestFunction1 myTestFunction2"
+    Write-Host "  $ScriptName compare-ats-config"
     Write-Host "  $ScriptName test"
     Write-Host "  $ScriptName deploy"
     Write-Host ""
@@ -430,6 +434,54 @@ function Cmd-CompareConfig {
     Write-ColorOutput "[OK] All comparisons complete" "Green"
 }
 
+# Cmd-CompareAts: Compare two Lambda functions at ATS level
+function Cmd-CompareAts {
+    param([string]$Func1, [string]$Func2)
+    
+    if (-not $Func1 -or -not $Func2) {
+        Write-ColorOutput "ERROR: Two function names required. Usage: compare-ats <function1> <function2>" "Red"
+        exit 1
+    }
+    
+    Write-ColorOutput "Performing ATS-level comparison: $Func1 vs $Func2..." "Blue"
+    
+    if (-not (Test-Path "compare_lambda_functions_ats.py")) {
+        Write-ColorOutput "ERROR: compare_lambda_functions_ats.py not found!" "Red"
+        exit 1
+    }
+    
+    & $PYTHON compare_lambda_functions_ats.py $Func1 $Func2
+    if ($LASTEXITCODE -ne 0) {
+        Write-ColorOutput "ATS comparison failed!" "Red"
+        exit 1
+    }
+    
+    Write-ColorOutput "[OK] ATS comparison complete" "Green"
+}
+
+# Cmd-CompareAtsConfig: Compare functions from config file at ATS level
+function Cmd-CompareAtsConfig {
+    Write-ColorOutput "Running ATS-level comparisons from comparison.config.yaml..." "Blue"
+    
+    if (-not (Test-Path "compare_lambda_functions_ats.py")) {
+        Write-ColorOutput "ERROR: compare_lambda_functions_ats.py not found!" "Red"
+        exit 1
+    }
+    
+    if (-not (Test-Path "comparison.config.yaml")) {
+        Write-ColorOutput "ERROR: comparison.config.yaml not found!" "Red"
+        exit 1
+    }
+    
+    & $PYTHON compare_lambda_functions_ats.py comparison.config.yaml
+    if ($LASTEXITCODE -ne 0) {
+        Write-ColorOutput "ATS comparison failed!" "Red"
+        exit 1
+    }
+    
+    Write-ColorOutput "[OK] All ATS comparisons complete" "Green"
+}
+
 # Cmd-Deploy: Deploy Lambda functions
 function Cmd-Deploy {
     Write-ColorOutput "Deploying Lambda functions..." "Blue"
@@ -493,6 +545,8 @@ switch ($Command.ToLower()) {
     "build" { Cmd-Build }
     "compare" { Cmd-Compare $FunctionList $Function2 }
     "compare-config" { Cmd-CompareConfig }
+    "compare-ats" { Cmd-CompareAts $FunctionList $Function2 }
+    "compare-ats-config" { Cmd-CompareAtsConfig }
     "test" { Cmd-Test }
     "test-fast" { Cmd-TestFast }
     "init-terraform" { Cmd-InitTerraform }
