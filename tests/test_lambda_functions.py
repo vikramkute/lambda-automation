@@ -323,16 +323,6 @@ class TestAllFunctions:
 class TestLocalExecution:
     """Test functions by invoking them locally (requires SAM CLI)."""
     
-    @pytest.fixture
-    def sam_available(self):
-        """Check if SAM CLI is available."""
-        import subprocess
-        try:
-            subprocess.run(['sam.cmd' if os.name == 'nt' else 'sam', '--version'], capture_output=True, check=True)
-            return True
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            return False
-    
     @pytest.mark.skipif(
         os.environ.get('SKIP_SAM_TESTS', 'false').lower() == 'true',
         reason="SAM CLI tests skipped"
@@ -340,21 +330,26 @@ class TestLocalExecution:
     @pytest.mark.parametrize("func_config", [
         f for f in CONFIG.get('functions', []) if f.get('enabled', True)
     ], ids=lambda x: x['name'])
-    def test_sam_build_succeeds(self, func_config, sam_available):
+    def test_sam_build_succeeds(self, func_config):
         """Test that SAM build succeeds for each function."""
-        if not sam_available:
+        # Check if SAM CLI is available
+        import subprocess
+        sam_cmd = 'sam'
+        try:
+            subprocess.run([sam_cmd, '--version'], capture_output=True, check=True, timeout=5, shell=True)
+        except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired):
             pytest.skip("SAM CLI not available")
         
-        import subprocess
         func_path = Path(func_config['path'])
         
         try:
             result = subprocess.run(
-                ['sam.cmd' if os.name == 'nt' else 'sam', 'build'],
+                [sam_cmd, 'build'],
                 cwd=str(func_path),
                 capture_output=True,
                 text=True,
-                timeout=120
+                timeout=120,
+                shell=True
             )
             if result.returncode != 0:
                 pytest.fail(f"SAM build failed for {func_config['name']}: {result.stderr}")
