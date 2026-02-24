@@ -74,7 +74,8 @@ class LambdaUpgrader:
                 capture_output=True,
                 text=True,
                 check=False,
-                timeout=timeout  # Add timeout to prevent hanging
+                timeout=timeout,  # Add timeout to prevent hanging
+                shell=True  # Use shell to resolve commands like 'sam' on Windows
             )
             if result.returncode != 0 and check:
                 logger.error(f"Command failed: {' '.join(cmd)}")
@@ -257,8 +258,8 @@ class LambdaUpgrader:
             logger.info(f"Step 4: Building with SAM CLI for {function_name}")
             function_path = Path(self.workspace_root) / function_config['path']
             
-            # Use sam.cmd on Windows, sam on Unix
-            sam_cmd = 'sam.cmd' if os.name == 'nt' else 'sam'
+            # Use sam CLI consistently across platforms
+            sam_cmd = 'sam'
             
             # Check if sam command exists
             try:
@@ -377,8 +378,8 @@ def main():
             function_name = func_config['name']
             function_path = Path(upgrader.workspace_root) / func_config['path']
             
-            # Use sam.cmd on Windows, sam on Unix
-            sam_cmd = 'sam.cmd' if os.name == 'nt' else 'sam'
+            # Use sam CLI consistently across platforms
+            sam_cmd = 'sam'
             
             try:
                 result = upgrader._run_command(

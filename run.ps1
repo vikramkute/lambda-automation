@@ -245,13 +245,25 @@ function Cmd-Build {
         New-Item -ItemType Directory -Path ".packages" -Force | Out-Null
     }
     
-    # Get functions from config
-    $functions = & $PYTHON -c "import yaml; c=yaml.safe_load(open('functions.config.yaml')); print(' '.join([f['name'] for f in c.get('functions', []) if f.get('enabled', True)]))"
+    # Get functions from config with their paths
+    $configData = & $PYTHON -c "import yaml,json; c=yaml.safe_load(open('functions.config.yaml')); print(json.dumps([{'name': f['name'], 'path': f['path']} for f in c.get('functions', []) if f.get('enabled', True)]))" | ConvertFrom-Json
     
-    foreach ($func in $functions.Split(' ')) {
-        if ($func -and (Test-Path "$func\src")) {
-            Write-ColorOutput "  Creating ZIP for $func..." "Yellow"
-            powershell "Compress-Archive -Path '$func\src\*' -DestinationPath '.packages\$func.zip' -Force"
+    foreach ($func in $configData) {
+        $funcName = $func.name
+        $funcPath = $func.path
+        $srcPath = Join-Path $funcPath "src"
+        
+        if (Test-Path $srcPath) {
+            Write-ColorOutput "  Creating ZIP for $funcName from $srcPath..." "Yellow"
+            $zipPath = ".packages\$funcName.zip"
+            Compress-Archive -Path "$srcPath\*" -DestinationPath $zipPath -Force
+            if ($LASTEXITCODE -eq 0 -or (Test-Path $zipPath)) {
+                Write-ColorOutput "    [OK] Created $zipPath" "Green"
+            } else {
+                Write-ColorOutput "    [ERROR] Failed to create ZIP for $funcName" "Red"
+            }
+        } else {
+            Write-ColorOutput "    [SKIP] Source path not found: $srcPath" "Yellow"
         }
     }
     
