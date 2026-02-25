@@ -18,10 +18,6 @@ from typing import Dict, List, Any, Optional, Set
 from dataclasses import dataclass, asdict
 import io
 
-# Ensure UTF-8 output on Windows
-if sys.platform == 'win32':
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-
 
 @dataclass
 class ASTAnalysis:
@@ -36,6 +32,55 @@ class ASTAnalysis:
     has_lambda_handler: bool
     external_calls: List[str]
     variables_defined: List[str]
+
+
+@dataclass
+class FunctionConfig:
+    """Lambda function configuration extracted from SAM template."""
+    name: str
+    runtime: str
+    memory: int
+    timeout: int
+    handler: str
+    description: str
+    environment_vars: Dict[str, str]
+    layers: List[str]
+    tracing_enabled: bool
+    ephemeral_storage: int
+    architecture: str
+
+
+@dataclass
+class FunctionDependencies:
+    """Lambda function dependency information."""
+    python_version: str
+    total_packages: int
+    packages: List[str]
+    missing_packages: List[str]
+
+
+@dataclass
+class FunctionMetrics:
+    """Calculated performance metrics for a Lambda function."""
+    memory_efficiency: float
+    estimated_coldstart_time: float
+    code_complexity_score: float
+    dependency_count: int
+
+
+@dataclass
+class TestResult:
+    """Result of a single test execution."""
+    function_name: str
+    test_name: str
+    passed: bool
+    message: str
+
+
+# Prevent pytest from treating this dataclass as a test class
+TestResult.__test__ = False  # type: ignore[attr-defined]
+
+
 class ASTComparator:
     """Compare Lambda functions at AST level."""
 
@@ -114,12 +159,34 @@ class ASTComparator:
                 
                 def visit_Call(self, node):
                     nonlocal external_calls
+                    # Built-in functions and common stdlib names to exclude
+                    _BUILTINS = {
+                        'print', 'len', 'str', 'int', 'float', 'list', 'dict',
+                        'set', 'tuple', 'bool', 'bytes', 'isinstance', 'issubclass',
+                        'type', 'range', 'enumerate', 'zip', 'map', 'filter',
+                        'sorted', 'reversed', 'hasattr', 'getattr', 'setattr',
+                        'vars', 'dir', 'id', 'hash', 'repr', 'open', 'super',
+                        'staticmethod', 'classmethod', 'property', 'next', 'iter',
+                        'min', 'max', 'sum', 'abs', 'round', 'any', 'all',
+                    }
+                    # For attribute calls, only track calls on known external
+                    # service-like objects (not local variable methods)
+                    _SKIP_ATTRS = {
+                        'append', 'extend', 'pop', 'get', 'items', 'keys',
+                        'values', 'update', 'split', 'join', 'strip', 'upper',
+                        'lower', 'replace', 'encode', 'decode', 'format',
+                        'read', 'write', 'close', 'seek', 'tell',
+                        'startswith', 'endswith', 'find', 'count',
+                        'isoformat', 'strftime', 'strptime', 'utcnow', 'now',
+                        'dumps', 'loads', 'load', 'dump',
+                    }
                     if isinstance(node.func, ast.Attribute):
                         if isinstance(node.func.value, ast.Name):
-                            external_calls.add(f"{node.func.value.id}.{node.func.attr}")
+                            # Only track if attribute is not a common stdlib/local method
+                            if node.func.attr not in _SKIP_ATTRS:
+                                external_calls.add(f"{node.func.value.id}.{node.func.attr}")
                     elif isinstance(node.func, ast.Name):
-                        # Only track calls to external modules, not built-ins
-                        if node.func.id not in {'print', 'len', 'str', 'int', 'list', 'dict', 'set'}:
+                        if node.func.id not in _BUILTINS:
                             external_calls.add(node.func.id)
                     self.generic_visit(node)
                 
@@ -222,41 +289,254 @@ class ASTComparator:
         
         return sum(scores) / len(scores) if scores else 0.0
 
+    # ------------------------------------------------------------------
+    # Config / dependency / metrics helpers
+    # ------------------------------------------------------------------
+
+    def _load_template_config(self, func_path: Path) -> Optional[Dict]:
+        """Load SAM/CloudFormation template configuration from a function directory."""
+        template_file = func_path / "template.yml"
+        if not template_file.exists():
+            return None
+        try:
+            import yaml
+            with open(template_file, 'r', encoding='utf-8') as f:
+                return yaml.safe_load(f)
+        except Exception:
+            return None
+
+    def _extract_function_config(self, name: str, func_path: Path) -> 'FunctionConfig':
+        """Extract function configuration from SAM template."""
+        template = self._load_template_config(func_path)
+        runtime = "unknown"
+        memory = 128
+        timeout = 3
+        handler = "lambda_function.lambda_handler"
+        description = ""
+        environment_vars: Dict[str, str] = {}
+        layers: List[str] = []
+        tracing_enabled = False
+        ephemeral_storage = 512
+        architecture = "x86_64"
+
+        if template:
+            resources = template.get('Resources', {})
+            for _res_name, resource in resources.items():
+                if resource.get('Type') in (
+                    'AWS::Lambda::Function', 'AWS::Serverless::Function'
+                ):
+                    props = resource.get('Properties', {})
+                    runtime = props.get('Runtime', runtime)
+                    memory = props.get('MemorySize', memory)
+                    timeout = props.get('Timeout', timeout)
+                    handler = props.get('Handler', handler)
+                    description = props.get('Description', description)
+                    environment_vars = (
+                        props.get('Environment', {}).get('Variables', {}) or {}
+                    )
+                    layers = props.get('Layers', layers)
+                    tracing_enabled = props.get('Tracing', 'PassThrough') == 'Active'
+                    eph = props.get('EphemeralStorage', ephemeral_storage)
+                    ephemeral_storage = eph.get('Size', 512) if isinstance(eph, dict) else eph
+                    archs = props.get('Architectures', [architecture])
+                    architecture = archs[0] if archs else architecture
+                    break
+
+        return FunctionConfig(
+            name=name,
+            runtime=runtime,
+            memory=memory,
+            timeout=timeout,
+            handler=handler,
+            description=description,
+            environment_vars=environment_vars,
+            layers=layers,
+            tracing_enabled=tracing_enabled,
+            ephemeral_storage=ephemeral_storage,
+            architecture=architecture,
+        )
+
+    def _get_requirements(self, func_path: Path) -> 'FunctionDependencies':
+        """Extract dependencies from requirements.txt."""
+        req_file = func_path / "src" / "requirements.txt"
+        packages: List[str] = []
+        if req_file.exists():
+            with open(req_file, 'r', encoding='utf-8') as f:
+                packages = [
+                    line.strip()
+                    for line in f
+                    if line.strip() and not line.startswith('#')
+                ]
+        python_version = "3.12"
+        return FunctionDependencies(
+            python_version=python_version,
+            total_packages=len(packages),
+            packages=packages,
+            missing_packages=[],
+        )
+
+    def _get_significance(self, field: str) -> str:
+        """Return significance level for a configuration field difference."""
+        critical = {'runtime', 'memory', 'timeout', 'architecture'}
+        important = {'handler', 'layers', 'tracing_enabled', 'environment_vars', 'ephemeral_storage'}
+        if field in critical:
+            return 'CRITICAL'
+        if field in important:
+            return 'IMPORTANT'
+        return 'MINOR'
+
+    def _compare_configs(
+        self, config1: 'FunctionConfig', config2: 'FunctionConfig'
+    ) -> List[Dict[str, Any]]:
+        """Compare two FunctionConfig objects and return a list of differences."""
+        diffs: List[Dict[str, Any]] = []
+        fields = [
+            'runtime', 'memory', 'timeout', 'handler', 'architecture',
+            'tracing_enabled', 'ephemeral_storage', 'layers', 'environment_vars',
+            'description',
+        ]
+        for field in fields:
+            val1 = getattr(config1, field)
+            val2 = getattr(config2, field)
+            if val1 != val2:
+                diffs.append({
+                    'field': field,
+                    'function1_value': val1,
+                    'function2_value': val2,
+                    'significance': self._get_significance(field),
+                })
+        return diffs
+
+    def _compare_dependencies(
+        self, deps1: 'FunctionDependencies', deps2: 'FunctionDependencies'
+    ) -> Dict[str, Any]:
+        """Compare dependencies between two functions."""
+        set1 = set(deps1.packages)
+        set2 = set(deps2.packages)
+        return {
+            'total_difference': abs(deps1.total_packages - deps2.total_packages),
+            'only_in_function1': sorted(list(set1 - set2)),
+            'only_in_function2': sorted(list(set2 - set1)),
+            'common': sorted(list(set1 & set2)),
+            'function1_count': deps1.total_packages,
+            'function2_count': deps2.total_packages,
+        }
+
+    def _calculate_metrics(
+        self, config: 'FunctionConfig', deps: 'FunctionDependencies'
+    ) -> 'FunctionMetrics':
+        """Calculate estimated performance metrics for a Lambda function."""
+        memory_efficiency = min(100.0, (config.memory / 3008.0) * 100)
+        base_coldstart = 200.0
+        dep_factor = deps.total_packages * 10.0
+        estimated_coldstart_time = base_coldstart + dep_factor
+        code_complexity_score = max(1.0, 1.0 + deps.total_packages * 0.5)
+        return FunctionMetrics(
+            memory_efficiency=memory_efficiency,
+            estimated_coldstart_time=estimated_coldstart_time,
+            code_complexity_score=code_complexity_score,
+            dependency_count=deps.total_packages,
+        )
+
+    def _compare_metrics(
+        self, metrics1: 'FunctionMetrics', metrics2: 'FunctionMetrics'
+    ) -> Dict[str, Any]:
+        """Compare metrics from two functions."""
+        coldstart_diff = metrics2.estimated_coldstart_time - metrics1.estimated_coldstart_time
+        return {
+            'coldstart_diff_ms': abs(coldstart_diff),
+            'coldstart_faster': 'function1' if coldstart_diff > 0 else 'function2',
+            'memory_efficiency_diff': abs(metrics1.memory_efficiency - metrics2.memory_efficiency),
+            'complexity_diff': abs(metrics1.code_complexity_score - metrics2.code_complexity_score),
+        }
+
+    def _get_event_sources(self, func_path: Path) -> List[str]:
+        """Detect event source types from the SAM template."""
+        template = self._load_template_config(func_path)
+        sources: List[str] = []
+        if template:
+            resources = template.get('Resources', {})
+            for _res_name, resource in resources.items():
+                props = resource.get('Properties', {})
+                for _evt_name, event in props.get('Events', {}).items():
+                    evt_type = event.get('Type', '')
+                    if evt_type:
+                        sources.append(evt_type)
+        if not sources:
+            sources = ['Direct Invocation']
+        return sources
+
     def compare(self) -> Dict[str, Any]:
         """Perform AST-level comparison between two functions."""
         func1_name = self.func1_path.name
         func2_name = self.func2_path.name
-        
+
+        # Configuration
+        config1 = self._extract_function_config(func1_name, self.func1_path)
+        config2 = self._extract_function_config(func2_name, self.func2_path)
+        config_diffs = self._compare_configs(config1, config2)
+
+        # Dependencies
+        deps1 = self._get_requirements(self.func1_path)
+        deps2 = self._get_requirements(self.func2_path)
+        dep_diff = self._compare_dependencies(deps1, deps2)
+
+        # Metrics
+        metrics1 = self._calculate_metrics(config1, deps1)
+        metrics2 = self._calculate_metrics(config2, deps2)
+        metrics_comp = self._compare_metrics(metrics1, metrics2)
+
         # AST analysis
         ast1 = self._analyze_ast(self.func1_path)
         ast2 = self._analyze_ast(self.func2_path)
-        
+
+        # Event sources
+        event_sources1 = self._get_event_sources(self.func1_path)
+        event_sources2 = self._get_event_sources(self.func2_path)
+
         return {
             'timestamp': datetime.now().isoformat(),
-            'function1': {
-                'name': func1_name,
-                'path': str(self.func1_path)
+            'function1': func1_name,
+            'function2': func2_name,
+            'configuration': {
+                'function1': asdict(config1),
+                'function2': asdict(config2),
+                'differences': config_diffs,
             },
-            'function2': {
-                'name': func2_name,
-                'path': str(self.func2_path)
+            'dependencies': {
+                'function1': asdict(deps1),
+                'function2': asdict(deps2),
+                'comparison': dep_diff,
+            },
+            'metrics': {
+                'function1': asdict(metrics1),
+                'function2': asdict(metrics2),
+                'comparison': metrics_comp,
+            },
+            'tests': {
+                'function1': [],
+                'function2': [],
+            },
+            'event_sources': {
+                'function1': event_sources1,
+                'function2': event_sources2,
             },
             'ast_analysis': {
                 'function1': asdict(ast1) if ast1 else None,
                 'function2': asdict(ast2) if ast2 else None,
-                'comparison': self._compare_ast_analysis(ast1, ast2)
-            }
+                'comparison': self._compare_ast_analysis(ast1, ast2),
+            },
         }
 
     def generate_report(self, output_file: Optional[str] = None) -> str:
         """Generate human-readable AST comparison report."""
         comparison = self.compare()
-        
-        func1_name = comparison['function1']['name']
-        func2_name = comparison['function2']['name']
-        func1_display = f"{func1_name} ({comparison['function1']['path']})"
-        func2_display = f"{func2_name} ({comparison['function2']['path']})"
-        
+
+        func1_name = comparison['function1']
+        func2_name = comparison['function2']
+        func1_display = f"{func1_name} ({self.func1_path})"
+        func2_display = f"{func2_name} ({self.func2_path})"
+
         report = []
         report.append("=" * 80)
         report.append("AWS Lambda Function AST-Level Comparison Report")
@@ -264,15 +544,70 @@ class ASTComparator:
         report.append(f"\nGenerated: {comparison['timestamp']}")
         report.append(f"Function 1: {func1_display}")
         report.append(f"Function 2: {func2_display}\n")
-        
-        # AST Analysis
+
+        # ------------------------------------------------------------------
+        # CONFIGURATION COMPARISON
+        # ------------------------------------------------------------------
+        report.append("\n" + "-" * 80)
+        report.append("CONFIGURATION COMPARISON")
+        report.append("-" * 80)
+        cfg_data = comparison['configuration']
+        diffs = cfg_data.get('differences', [])
+        if not diffs:
+            report.append("\n  [✓] Configurations are identical.")
+        else:
+            for d in diffs:
+                significance = d.get('significance', 'MINOR')
+                marker = '[!!]' if significance == 'CRITICAL' else '[!]' if significance == 'IMPORTANT' else '[-]'
+                report.append(
+                    f"\n  {marker} {d['field']}: {d['function1_value']} → {d['function2_value']}  ({significance})"
+                )
+
+        # ------------------------------------------------------------------
+        # DEPENDENCIES COMPARISON
+        # ------------------------------------------------------------------
+        report.append("\n" + "-" * 80)
+        report.append("DEPENDENCIES COMPARISON")
+        report.append("-" * 80)
+        dep_data = comparison['dependencies']
+        dep_comp = dep_data.get('comparison', {})
+        report.append(f"\n  {func1_name}: {dep_comp.get('function1_count', 0)} package(s)")
+        report.append(f"  {func2_name}: {dep_comp.get('function2_count', 0)} package(s)")
+        if dep_comp.get('only_in_function1'):
+            report.append(f"  Only in {func1_name}: {', '.join(dep_comp['only_in_function1'][:5])}")
+        if dep_comp.get('only_in_function2'):
+            report.append(f"  Only in {func2_name}: {', '.join(dep_comp['only_in_function2'][:5])}")
+        if dep_comp.get('common'):
+            report.append(f"  Shared packages: {', '.join(dep_comp['common'][:5])}")
+
+        # ------------------------------------------------------------------
+        # PERFORMANCE METRICS
+        # ------------------------------------------------------------------
+        report.append("\n" + "-" * 80)
+        report.append("PERFORMANCE METRICS")
+        report.append("-" * 80)
+        met_comp = comparison['metrics'].get('comparison', {})
+        met1 = comparison['metrics'].get('function1', {})
+        met2 = comparison['metrics'].get('function2', {})
+        report.append(f"\n  Estimated cold-start  {func1_name}: {met1.get('estimated_coldstart_time', 0):.0f} ms")
+        report.append(f"  Estimated cold-start  {func2_name}: {met2.get('estimated_coldstart_time', 0):.0f} ms")
+        faster = met_comp.get('coldstart_faster', '')
+        if faster and met_comp.get('coldstart_diff_ms', 0) > 0:
+            faster_name = func1_name if faster == 'function1' else func2_name
+            report.append(f"  Faster cold-start: {faster_name} (by {met_comp.get('coldstart_diff_ms', 0):.0f} ms)")
+        report.append(f"\n  Memory efficiency     {func1_name}: {met1.get('memory_efficiency', 0):.1f}%")
+        report.append(f"  Memory efficiency     {func2_name}: {met2.get('memory_efficiency', 0):.1f}%")
+
+        # ------------------------------------------------------------------
+        # CODE STRUCTURE & SEMANTIC ANALYSIS (AST)
+        # ------------------------------------------------------------------
         report.append("\n" + "-" * 80)
         report.append("CODE STRUCTURE & SEMANTIC ANALYSIS (AST)")
         report.append("-" * 80)
-        
+
         ast_data = comparison['ast_analysis']
         ast_comp = ast_data['comparison']
-        
+
         if ast_comp.get('status') == 'incomplete':
             report.append(f"\n[!] {ast_comp.get('message', 'Could not analyze code')}")
         else:
@@ -285,7 +620,7 @@ class ASTComparator:
                 report.append("  Status: [~] MODERATELY SIMILAR")
             else:
                 report.append("  Status: [!] QUITE DIFFERENT")
-            
+
             # Basic statistics
             report.append(f"\n{func1_name}:")
             if ast_data['function1']:
@@ -297,7 +632,7 @@ class ASTComparator:
                 report.append(f"  Imports: {len(f1['imports'])}")
                 report.append(f"  Cyclomatic Complexity: {f1['cyclomatic_complexity']}")
                 report.append(f"  Has Lambda Handler: {f1['has_lambda_handler']}")
-            
+
             report.append(f"\n{func2_name}:")
             if ast_data['function2']:
                 f2 = ast_data['function2']
@@ -308,7 +643,7 @@ class ASTComparator:
                 report.append(f"  Imports: {len(f2['imports'])}")
                 report.append(f"  Cyclomatic Complexity: {f2['cyclomatic_complexity']}")
                 report.append(f"  Has Lambda Handler: {f2['has_lambda_handler']}")
-            
+
             # Function definitions
             funcs_diff = ast_comp.get('functions_diff', {})
             if funcs_diff.get('only_in_first') or funcs_diff.get('only_in_second'):
@@ -319,7 +654,7 @@ class ASTComparator:
                     report.append(f"  Only in {func2_name}: {', '.join(funcs_diff['only_in_second'][:5])}")
                 if funcs_diff.get('common'):
                     report.append(f"  Common functions: {', '.join(funcs_diff['common'][:5])}")
-            
+
             # Class definitions
             classes_diff = ast_comp.get('classes_diff', {})
             if classes_diff.get('only_in_first') or classes_diff.get('only_in_second'):
@@ -328,7 +663,7 @@ class ASTComparator:
                     report.append(f"  Only in {func1_name}: {', '.join(classes_diff['only_in_first'][:5])}")
                 if classes_diff.get('only_in_second'):
                     report.append(f"  Only in {func2_name}: {', '.join(classes_diff['only_in_second'][:5])}")
-            
+
             # Complexity comparison
             complexity = ast_comp.get('complexity_diff', {})
             report.append(f"\nCyclomatic Complexity:")
@@ -339,7 +674,7 @@ class ASTComparator:
                 report.append(f"  Difference: +{diff} ({func2_name} more complex)")
             elif diff < 0:
                 report.append(f"  Difference: {diff} ({func1_name} more complex)")
-            
+
             # Imports
             imports_diff = ast_comp.get('imports_diff', {})
             if imports_diff.get('only_in_first') or imports_diff.get('only_in_second'):
@@ -348,7 +683,7 @@ class ASTComparator:
                     report.append(f"  Only in {func1_name}: {', '.join(imports_diff['only_in_first'][:3])}")
                 if imports_diff.get('only_in_second'):
                     report.append(f"  Only in {func2_name}: {', '.join(imports_diff['only_in_second'][:3])}")
-            
+
             # External calls
             calls_diff = ast_comp.get('external_calls_diff', {})
             if calls_diff.get('only_in_first') or calls_diff.get('only_in_second'):
@@ -357,28 +692,28 @@ class ASTComparator:
                     report.append(f"  Only in {func1_name}: {', '.join(calls_diff['only_in_first'][:3])}")
                 if calls_diff.get('only_in_second'):
                     report.append(f"  Only in {func2_name}: {', '.join(calls_diff['only_in_second'][:3])}")
-            
+
             # Line count difference
             lines_diff = ast_comp.get('lines_diff', 0)
             if lines_diff != 0:
                 report.append(f"\nCode Size Difference: {lines_diff:+d} lines")
-            
+
             # Statements difference
             stmts_diff = ast_comp.get('statements_diff', 0)
             if stmts_diff != 0:
                 report.append(f"Statement Count Difference: {stmts_diff:+d} statements")
-        
+
         report.append("\n" + "=" * 80 + "\n")
-        
+
         report_text = "\n".join(report)
-        
+
         if output_file:
             output_path = Path(output_file)
             output_path.parent.mkdir(parents=True, exist_ok=True)
             with open(output_file, 'w', encoding='utf-8') as f:
                 f.write(report_text)
             print(f"[OK] Report saved to: {output_file}")
-        
+
         return report_text
 
     def generate_json_report(self, output_file: str) -> None:
@@ -415,7 +750,10 @@ def compare_functions_ast(func1: str, func2: str, output_dir: str = "comparisons
     """Compare two Lambda functions at AST level with automatic file output."""
     try:
         comparator = ASTComparator(func1, func2)
-        output_file = _prepare_ast_output_file(output_dir, func1, func2)
+        # Use only the basename so the output filename stays flat
+        func1_name = Path(func1).name
+        func2_name = Path(func2).name
+        output_file = _prepare_ast_output_file(output_dir, func1_name, func2_name)
         
         # Generate reports
         report = comparator.generate_report(str(output_file))
@@ -494,6 +832,10 @@ def compare_from_config_ast(config_file: str, output_dir: str = "comparisons-ast
 
 def main():
     """Main entry point."""
+    # Ensure UTF-8 output on Windows when running as a script
+    if sys.platform == 'win32' and hasattr(sys.stdout, 'buffer'):
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
     if len(sys.argv) < 2:
         print("Usage:")
         print("  python compare_lambda_functions_ast.py <config.yaml>")

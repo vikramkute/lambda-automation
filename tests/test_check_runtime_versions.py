@@ -48,3 +48,7 @@ class TestCheckRuntimeVersions:
             with patch('check_runtime_versions.open', side_effect=lambda f, *args, **kwargs: open(config_file, *args, **kwargs)):
                 check_runtime_versions.main()
                 assert '128MB' in caplog.text
+
+
+if __name__ == '__main__':
+    pytest.main([__file__, '-v'])

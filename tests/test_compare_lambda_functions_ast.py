@@ -327,8 +327,16 @@ Resources:
             assert result is not None
             assert result['function1'] == 'func_old'
             assert result['function2'] == 'func_new'
-            
-            # Generate reports
-            with tempfile.NamedTemporaryFile(suffix='.txt') as f:
-                report = comparator.generate_report(f.name)
+
+            # Generate reports (use delete=False so the file can be reopened on Windows)
+            with tempfile.NamedTemporaryFile(suffix='.txt', delete=False) as f:
+                report_path = f.name
+            try:
+                report = comparator.generate_report(report_path)
                 assert len(report) > 0
+            finally:
+                Path(report_path).unlink(missing_ok=True)
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

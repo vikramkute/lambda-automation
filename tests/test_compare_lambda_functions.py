@@ -293,3 +293,7 @@ class TestGeneratePdfReport:
             assert pdf_file.exists()
         except ImportError:
             pytest.skip("reportlab not available")
+
+
+if __name__ == '__main__':
+    pytest.main([__file__, '-v'])

@@ -441,3 +441,7 @@ class TestRunCommand:
         with patch('subprocess.run', side_effect=subprocess.TimeoutExpired('cmd', 1)):
             with pytest.raises(subprocess.TimeoutExpired):
                 deployer._run_command(['sleep', '10'], timeout=1)
+
+
+if __name__ == '__main__':
+    pytest.main([__file__, '-v'])
