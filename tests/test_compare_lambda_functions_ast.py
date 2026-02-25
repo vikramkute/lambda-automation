@@ -216,9 +216,8 @@ Resources:
         
         result = comparator.compare()
         
-        assert result['function1'] == 'func1'
-        assert result['function2'] == 'func2'
-        assert 'configuration' in result
+        assert Path(result['function1']).name == 'func1'
+        assert Path(result['function2']).name == 'func2'
         assert 'dependencies' in result
         assert 'metrics' in result
         assert 'tests' in result
@@ -250,8 +249,8 @@ Resources:
             with open(json_file, 'r') as f:
                 data = json.load(f)
             
-            assert data['function1'] == 'func1'
-            assert data['function2'] == 'func2'
+            assert Path(data['function1']).name == 'func1'
+            assert Path(data['function2']).name == 'func2'
             assert 'configuration' in data
         finally:
             Path(json_file).unlink()
@@ -325,8 +324,8 @@ Resources:
             
             # Verify result structure
             assert result is not None
-            assert result['function1'] == 'func_old'
-            assert result['function2'] == 'func_new'
+            assert Path(result['function1']).name == 'func_old'
+            assert Path(result['function2']).name == 'func_new'
 
             # Generate reports (use delete=False so the file can be reopened on Windows)
             with tempfile.NamedTemporaryFile(suffix='.txt', delete=False) as f:

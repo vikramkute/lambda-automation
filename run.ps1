@@ -303,6 +303,22 @@ function Cmd-Test {
     Write-ColorOutput "[OK] Tests passed" "Green"
 }
 
+# Cmd-Report: Generate HTML comparison report from all AST JSON files
+function Cmd-Report {
+    $inputDir = "comparisons-ast"
+    $outputFile = "comparison_report.html"
+    Write-ColorOutput "Generating HTML comparison report from '$inputDir'..." "Blue"
+    & $PYTHON generate_comparison_report.py --input-dir $inputDir --output $outputFile
+    if ($LASTEXITCODE -ne 0) {
+        Write-ColorOutput "[ERROR] Report generation failed" "Red"
+        exit 1
+    }
+    Write-ColorOutput "[OK] Report saved to $outputFile" "Green"
+    # Open in default browser (works without a server since all data is inline)
+    $absolutePath = (Resolve-Path $outputFile).Path
+    Start-Process $absolutePath
+}
+
 # Cmd-InitTerraform: Initialize Terraform
 function Cmd-InitTerraform {
     Write-ColorOutput "Initializing Terraform..." "Blue"
@@ -561,6 +577,7 @@ switch ($Command.ToLower()) {
     "compare-ast-config" { Cmd-CompareAstConfig }
     "test" { Cmd-Test }
     "test-fast" { Cmd-TestFast }
+    "report" { Cmd-Report }
     "init-terraform" { Cmd-InitTerraform }
     "create-log-groups" { Cmd-CreateLogGroups }
     "terraform-output" { Cmd-TerraformOutput }

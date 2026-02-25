@@ -93,6 +93,9 @@ class ASTComparator:
         """
         self.func1_path = Path(func1_path).resolve()
         self.func2_path = Path(func2_path).resolve()
+        # Keep the original user-supplied path strings for display (e.g. "prod/myTestFunction1")
+        self.func1_label = str(func1_path)
+        self.func2_label = str(func2_path)
         
         if not self.func1_path.is_dir():
             raise ValueError(f"Function 1 directory not found: {func1_path}")
@@ -496,8 +499,8 @@ class ASTComparator:
 
         return {
             'timestamp': datetime.now().isoformat(),
-            'function1': func1_name,
-            'function2': func2_name,
+            'function1': self.func1_label,
+            'function2': self.func2_label,
             'configuration': {
                 'function1': asdict(config1),
                 'function2': asdict(config2),
