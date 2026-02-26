@@ -127,7 +127,7 @@ python compare_lambda_functions.py func1 func2 --no-pdf
 ```yaml
 - name: myNewFunction
   path: ./myNewFunction
-  runtime: python3.14
+  runtime: python3.13
   memory: 256
   timeout: 60
   description: "My Lambda function"
@@ -158,7 +158,7 @@ make deploy             # Deploy
 
 ### Runtime Upgrade
 ```bash
-# Edit functions.config.yaml - change runtime to python3.14
+# Edit functions.config.yaml - change runtime to python3.13
 make upgrade            # Upgrade templates
 make test               # Test
 make deploy             # Deploy

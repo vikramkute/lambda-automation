@@ -2,16 +2,16 @@
 
 ## Required Software
 
-### 1. Python 3.14
+### 1. Python 3.13
 **Windows:**
 ```cmd
 # Download from python.org or use winget
-winget install Python.Python.3.14
+winget install Python.Python.3.13
 ```
 
 **macOS:**
 ```bash
-brew install python@3.14
+brew install python@3.13
 ```
 
 **Linux:**

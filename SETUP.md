@@ -100,7 +100,7 @@ Central configuration file:
 functions:
   - name: myTestFunction1
     path: ./myTestFunction1
-    runtime: python3.14
+    runtime: python3.13
     memory: 128
     timeout: 30
     description: "Test function 1 - S3 read operations"
@@ -108,7 +108,7 @@ functions:
 
   - name: myTestFunction2
     path: ./myTestFunction2
-    runtime: python3.14
+    runtime: python3.13
     memory: 128
     timeout: 30
     description: "Test function 2"
@@ -130,7 +130,7 @@ build:
 
 - **name**: Lambda function name (must be unique)
 - **path**: Directory containing function code
-- **runtime**: Python version (python3.14 recommended)
+- **runtime**: Python version (python3.13 recommended)
 - **memory**: RAM allocation in MB (128-10240)
 - **timeout**: Execution timeout in seconds (1-900)
 - **enabled**: true/false to enable/disable function

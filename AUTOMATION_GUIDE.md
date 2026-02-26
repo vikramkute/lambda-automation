@@ -59,7 +59,7 @@ make validate-config
 
 ### 2. Upgrade Lambda Runtimes
 
-Upgrade all configured functions to Python 3.14:
+Upgrade all configured functions to Python 3.13:
 
 ```bash
 make upgrade
@@ -136,7 +136,7 @@ Edit `functions.config.yaml`:
 functions:
   - name: myNewFunction
     path: ./myNewFunction
-    runtime: python3.14
+    runtime: python3.13
     description: "New Lambda function"
     enabled: true
     memory: 256
@@ -342,7 +342,7 @@ make deploy
 ### Upgrade Runtime and Deploy
 
 ```bash
-# Edit functions.config.yaml - update runtime to python3.14
+# Edit functions.config.yaml - update runtime to python3.13
 make upgrade
 make test
 make package
@@ -451,7 +451,7 @@ The deployment script automatically generates `terraform.tfvars.json` from your 
 {
   "lambda_functions": {
     "myTestFunction1": {
-      "runtime": "python3.14",
+      "runtime": "python3.13",
       "memory": 128,
       "timeout": 30,
       "environment": {},

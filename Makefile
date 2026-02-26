@@ -1,4 +1,4 @@
-.PHONY: help setup install-deps validate-config list-functions check-runtime-version upgrade build compare compare-config compare-ast compare-ast-config test test-fast init-terraform create-log-groups terraform-output plan-deploy deploy delete-function destroy-infra clean full-pipeline
+.PHONY: help setup install-deps validate-config list-functions check-runtime-version upgrade build compare compare-config compare-ast compare-ast-config test test-fast report init-terraform create-log-groups terraform-output plan-deploy deploy delete-function destroy-infra clean full-pipeline
 
 # Variables
 PYTHON := python3
@@ -44,28 +44,21 @@ upgrade: validate-config ## Upgrade all Lambda functions to latest Python runtim
 test: ## Run pytest test suite for all functions
 	@echo "$(BLUE)Running tests...$(NC)"
 	@TEST_DIR=$$($(PYTHON) -c "import yaml; c=yaml.safe_load(open('$(CONFIG)')); print(c.get('build',{}).get('test_dir','tests'))"); \
-	$(PYTHON) -m pytest $$TEST_DIR/test_lambda_functions.py $$TEST_DIR/test_s3_trigger_functions.py -v --tb=short --cov=. --cov-report=html
+	$(PYTHON) -m pytest $$TEST_DIR -v --tb=short --cov=rnd --cov=prod --cov-report=html
 	@echo "$(GREEN)[OK] Tests passed$(NC)"
 
 test-fast: ## Run tests without SAM CLI tests
 	@echo "$(BLUE)Running tests (fast mode)...$(NC)"
 	@TEST_DIR=$$($(PYTHON) -c "import yaml; c=yaml.safe_load(open('$(CONFIG)')); print(c.get('build',{}).get('test_dir','tests'))"); \
-	SKIP_SAM_TESTS=true $(PYTHON) -m pytest $$TEST_DIR/test_lambda_functions.py $$TEST_DIR/test_s3_trigger_functions.py -v --tb=short --cov=. --cov-report=html
+	SKIP_SAM_TESTS=true $(PYTHON) -m pytest $$TEST_DIR -v --tb=short --cov=rnd --cov=prod --cov-report=html
 	@echo "$(GREEN)[OK] Tests passed$(NC)"
 
 build: ## Build all Lambda functions with SAM CLI and create ZIP packages
 	@echo "$(BLUE)Building functions...$(NC)"
 	$(PYTHON) upgrade_lambda_runtime.py --build-only
 	@echo "$(BLUE)Creating ZIP packages...$(NC)"
-	@mkdir -p .packages
-	@for func in $$($(PYTHON) -c "import yaml; c=yaml.safe_load(open('$(CONFIG)')); print(' '.join([f['name'] for f in c.get('functions', []) if f.get('enabled', True)]))"); do \
-		if [ -d "$$func/src" ]; then \
-			echo "  Creating ZIP for $$func..."; \
-			cd "$$func/src" && zip -r "../../.packages/$$func.zip" . && cd ../..; \
-		fi; \
-	done
-	@echo "$(GREEN) Build and packaging complete$(NC)"
-
+	$(PYTHON) build_packages.py
+	@echo "$(GREEN)[OK] Build and packaging complete$(NC)"
 compare: ## Compare two Lambda functions (Usage: make compare FUNC1=function1 FUNC2=function2)
 	@if [ -z "$(FUNC1)" ] || [ -z "$(FUNC2)" ]; then \
 		echo "$(RED)ERROR: Two function names required. Usage: make compare FUNC1=function1 FUNC2=function2$(NC)"; \
@@ -196,8 +189,14 @@ check-runtime-version: ## Check Python runtime versions across all functions
 	$(PYTHON) check_runtime_versions.py
 
 
+report: ## Generate HTML comparison report from AST JSON files
+	@echo "$(BLUE)Generating HTML comparison report...$(NC)"
+	@$(PYTHON) generate_comparison_report.py --input-dir comparisons-ast --output comparison_report.html
+	@echo "$(GREEN)[OK] Report saved to comparison_report.html$(NC)"
+
 full-pipeline: clean setup validate-config upgrade build test plan-deploy ## Execute complete pipeline from environment setup through planning deployment
 	@echo "$(GREEN) Full pipeline complete!$(NC)"
 	@echo "$(BLUE)Next step: Run 'make deploy' to deploy to AWS$(NC)"
 
 .DEFAULT_GOAL := help
+

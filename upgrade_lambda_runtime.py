@@ -188,7 +188,7 @@ class LambdaUpgrader:
             return False
 
     def _fix_python314_syntax(self, function_config: Dict[str, Any]) -> bool:
-        """Fix outdated/incompatible Python syntax for Python 3.14."""
+        """Fix outdated/incompatible Python syntax for Python 3.13."""
         source_folder = self._get_source_folder(function_config)
         lambda_file = source_folder / 'lambda_function.py'
         
@@ -202,7 +202,7 @@ class LambdaUpgrader:
             
             original_content = content
             
-            # Fix common Python 3.14 compatibility issues
+            # Fix common Python 3.13 compatibility issues
             # 1. Replace deprecated imp module with importlib
             if 'import imp' in content:
                 content = content.replace('import imp', 'import importlib')
@@ -264,8 +264,8 @@ class LambdaUpgrader:
         logger.info(f"Upgrading {function_name}...")
         
         try:
-            # Step 1: Fix Python 3.14 syntax compatibility
-            logger.info(f"Step 1: Fixing Python 3.14 syntax for {function_name}")
+            # Step 1: Fix Python 3.13 syntax compatibility
+            logger.info(f"Step 1: Fixing Python 3.13 syntax for {function_name}")
             if not self._fix_python314_syntax(function_config):
                 logger.error(f"Failed at Step 1 (syntax fixing) for {function_name}")
                 return False

@@ -125,7 +125,7 @@ Located in `tests/mock_data/`:
 - Handler executes without errors
 
 **4. Runtime Tests**
-- Python 3.14 compatibility
+- Python 3.13 compatibility
 - Syntax validation
 - Dependency compatibility
 
@@ -220,7 +220,7 @@ tests/test_s3_trigger_functions.py::TestS3TriggerErrorHandling::test_invalid_eve
 functions:
   - name: myNewFunction
     path: ./myNewFunction
-    runtime: python3.14
+    runtime: python3.13
     enabled: true
     memory: 128
     timeout: 30
@@ -235,7 +235,7 @@ functions:
 functions:
   - name: myNewFunction
     path: ./myNewFunction
-    runtime: python3.14
+    runtime: python3.13
     enabled: true
     environment:
       S3_DESTINATION_BUCKET_NAME: "my-dest-bucket"

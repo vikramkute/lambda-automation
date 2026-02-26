@@ -278,7 +278,7 @@ function Cmd-TestFast {
     
     $testDir = & $PYTHON -c "import yaml; c=yaml.safe_load(open('functions.config.yaml')); print(c.get('build',{}).get('test_dir','tests'))"
     
-    & $PYTHON -m pytest $testDir -v --tb=short --cov=. --cov-report=html
+    & $PYTHON -m pytest $testDir -v --tb=short --cov=rnd --cov=prod --cov-report=html
     
     Remove-Item env:SKIP_SAM_TESTS -ErrorAction SilentlyContinue
     
@@ -295,7 +295,7 @@ function Cmd-Test {
     
     $testDir = & $PYTHON -c "import yaml; c=yaml.safe_load(open('functions.config.yaml')); print(c.get('build',{}).get('test_dir','tests'))"
     
-    & $PYTHON -m pytest $testDir -v --tb=short --cov=. --cov-report=html
+    & $PYTHON -m pytest $testDir -v --tb=short --cov=rnd --cov=prod --cov-report=html
     
     if ($LASTEXITCODE -ne 0) {
         Write-ColorOutput "Tests failed!" "Red"

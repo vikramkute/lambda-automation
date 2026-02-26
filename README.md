@@ -12,7 +12,7 @@ Configuration-driven framework for managing AWS Lambda functions with Python, SA
 ## 🎯 Features
 
 - **Configuration-Driven**: Single `functions.config.yaml` for all functions
-- **Runtime Upgrades**: Update all functions to latest Python runtime (3.14)
+- **Runtime Upgrades**: Update all functions to latest Python runtime (3.13)
 - **Testing**: Comprehensive pytest suite with moto AWS mocking
 - **Infrastructure-as-Code**: Terraform automation with tfvars.json
 - **Multi-Platform**: Windows (batch/PowerShell), macOS/Linux (make)
@@ -92,7 +92,7 @@ Edit `functions.config.yaml` to manage functions:
 functions:
   - name: myTestFunction1
     path: ./myTestFunction1
-    runtime: python3.14
+    runtime: python3.13
     description: "Test function 1 - S3 read operations"
     enabled: true
     memory: 128
@@ -122,7 +122,7 @@ build:
 | Validate | `run.bat validate-config` | `make validate-config` | Check YAML syntax |
 | List | `run.bat list-functions` | `make list-functions` | Show configured functions |
 | Check Runtime | `run.bat check-runtime-version` | `make check-runtime-version` | Check Python versions |
-| Upgrade | `run.bat upgrade` | `make upgrade` | Update to Python 3.14 |
+| Upgrade | `run.bat upgrade` | `make upgrade` | Update to Python 3.13 |
 | Build | `run.bat build` | `make build` | Build functions with SAM |
 | Test | `run.bat test-fast` | `make test-fast` | Quick tests (no SAM) |
 | Test Full | `run.bat test` | `make test` | Full test suite |
@@ -212,7 +212,7 @@ The framework currently manages 5 test functions:
 - `myTestFunction2-4`: Template functions for testing
 - `myTestFunction5`: Additional test function (disabled by default)
 
-All functions use Python 3.14 runtime with 128MB memory and 30s timeout.
+All functions use Python 3.13 runtime with 128MB memory and 30s timeout.
 
 ---
 

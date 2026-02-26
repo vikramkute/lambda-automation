@@ -4,9 +4,8 @@
 
 functions:
   - name: myTestFunction1
-    path: prod/myTestFunction1
-    src_folder: service_now_lambda_app
-    runtime: python3.14  # Latest supported Python runtime
+    path: rnd/myTestFunction1
+    runtime: python3.13  # Latest supported Python runtime
     description: "Test function 1 - S3 read operations testing"
     enabled: true
     memory: 128
@@ -19,28 +18,44 @@ functions:
       filter_prefix: ""
       filter_suffix: ""
 
-  # - name: myTestFunction2
-  #   path: prod/myTestFunction2
-  #   runtime: python3.14
-  #   description: "Test function 2"
-  #   enabled: true
-  #   memory: 128
-  #   timeout: 30
-  #   api_gateway:
-  #     enabled: true
-  #     http_method: "POST"
-  
-  # - name: myTestFunction3
-  #   path: prod/myTestFunction3
-  #   runtime: python3.14
-  #   description: "Test function 3"
-  #   enabled: true
-  #   memory: 128
-  #   timeout: 30
+  - name: service_now_lambda
+    path: prod/service_now_lambda
+    src_folder: service_now_lambda_app
+    runtime: python3.13
+    description: "Service_now_lambda Test function 2"
+    enabled: true
+    memory: 128
+    timeout: 30
+    environment:
+      S3_DESTINATION_BUCKET_NAME: "mybucket3accesspoint-znfe5kdypno5qb9wyxo5iexhikrjause1a-s3alias"
+    s3_trigger:
+      bucket: "test-s3-demo-bucket2"
+      events: ["s3:ObjectCreated:*"]
+      filter_prefix: ""
+      filter_suffix: ""
+
+  - name: myTestFunction2
+    path: prod/myTestFunction2
+    runtime: python3.13
+    description: "Test function 2"
+    enabled: true
+    memory: 128
+    timeout: 30
+    api_gateway:
+      enabled: true
+      http_method: "POST"
+    
+  - name: myTestFunction3
+    path: prod/myTestFunction3
+    runtime: python3.13
+    description: "Test function 3"
+    enabled: true
+    memory: 128
+    timeout: 30
 
   # - name: myTestFunction4
   #   path: prod/myTestFunction4
-  #   runtime: python3.14
+  #   runtime: python3.13
   #   description: "Test function 4"
   #   enabled: true
   #   memory: 128
@@ -48,7 +63,7 @@ functions:
 
   # - name: myTestFunction5
   #   path: prod/myTestFunction5
-  #   runtime: python3.14
+  #   runtime: python3.13
   #   description: "Test function 5"
   #   enabled: true
   #   memory: 128

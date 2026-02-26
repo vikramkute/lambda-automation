@@ -181,7 +181,7 @@ Edit `functions.config.yaml`:
 ```yaml
 functions:
   - name: myFunction
-    runtime: python3.14    # Update runtime
+    runtime: python3.13    # Update runtime
     memory: 512           # Update memory
     timeout: 120          # Update timeout
     enabled: false        # Disable function
@@ -285,11 +285,11 @@ python compare_lambda_functions.py myTestFunction1 myTestFunction2 --no-pdf
 ### List Functions Command
 ```
 Configured Lambda Functions:
-   myTestFunction1 (python3.14, 128MB)
-   myTestFunction2 (python3.14, 128MB)
-   myTestFunction3 (python3.14, 128MB)
-   myTestFunction4 (python3.14, 128MB)
-   myTestFunction5 (python3.14, 128MB) - DISABLED
+   myTestFunction1 (python3.13, 128MB)
+   myTestFunction2 (python3.13, 128MB)
+   myTestFunction3 (python3.13, 128MB)
+   myTestFunction4 (python3.13, 128MB)
+   myTestFunction5 (python3.13, 128MB) - DISABLED
 ```
 
 ### Terraform Output
