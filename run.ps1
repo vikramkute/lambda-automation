@@ -245,13 +245,14 @@ function Cmd-Build {
         New-Item -ItemType Directory -Path ".packages" -Force | Out-Null
     }
     
-    # Get functions from config with their paths
-    $configData = & $PYTHON -c "import yaml,json; c=yaml.safe_load(open('functions.config.yaml')); print(json.dumps([{'name': f['name'], 'path': f['path']} for f in c.get('functions', []) if f.get('enabled', True)]))" | ConvertFrom-Json
+    # Get functions from config with their paths and source folder
+    $configData = & $PYTHON -c "import yaml,json; c=yaml.safe_load(open('functions.config.yaml')); print(json.dumps([{'name': f['name'], 'path': f['path'], 'src_folder': f.get('src_folder', 'src')} for f in c.get('functions', []) if f.get('enabled', True)]))" | ConvertFrom-Json
     
     foreach ($func in $configData) {
         $funcName = $func.name
         $funcPath = $func.path
-        $srcPath = Join-Path $funcPath "src"
+        $srcFolder = $func.src_folder
+        $srcPath = Join-Path $funcPath $srcFolder
         
         if (Test-Path $srcPath) {
             Write-ColorOutput "  Creating ZIP for $funcName from $srcPath..." "Yellow"

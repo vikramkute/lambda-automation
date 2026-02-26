@@ -5,6 +5,7 @@
 functions:
   - name: myTestFunction1
     path: prod/myTestFunction1
+    src_folder: service_now_lambda_app
     runtime: python3.14  # Latest supported Python runtime
     description: "Test function 1 - S3 read operations testing"
     enabled: true
@@ -18,40 +19,40 @@ functions:
       filter_prefix: ""
       filter_suffix: ""
 
-  - name: myTestFunction2
-    path: prod/myTestFunction2
-    runtime: python3.14
-    description: "Test function 2"
-    enabled: true
-    memory: 128
-    timeout: 30
-    api_gateway:
-      enabled: true
-      http_method: "POST"
+  # - name: myTestFunction2
+  #   path: prod/myTestFunction2
+  #   runtime: python3.14
+  #   description: "Test function 2"
+  #   enabled: true
+  #   memory: 128
+  #   timeout: 30
+  #   api_gateway:
+  #     enabled: true
+  #     http_method: "POST"
   
-  - name: myTestFunction3
-    path: prod/myTestFunction3
-    runtime: python3.14
-    description: "Test function 3"
-    enabled: true
-    memory: 128
-    timeout: 30
+  # - name: myTestFunction3
+  #   path: prod/myTestFunction3
+  #   runtime: python3.14
+  #   description: "Test function 3"
+  #   enabled: true
+  #   memory: 128
+  #   timeout: 30
 
-  - name: myTestFunction4
-    path: prod/myTestFunction4
-    runtime: python3.14
-    description: "Test function 4"
-    enabled: true
-    memory: 128
-    timeout: 30
+  # - name: myTestFunction4
+  #   path: prod/myTestFunction4
+  #   runtime: python3.14
+  #   description: "Test function 4"
+  #   enabled: true
+  #   memory: 128
+  #   timeout: 30
 
-  - name: myTestFunction5
-    path: prod/myTestFunction5
-    runtime: python3.14
-    description: "Test function 5"
-    enabled: true
-    memory: 128
-    timeout: 30
+  # - name: myTestFunction5
+  #   path: prod/myTestFunction5
+  #   runtime: python3.14
+  #   description: "Test function 5"
+  #   enabled: true
+  #   memory: 128
+  #   timeout: 30
 
 # Global settings
 global:
