@@ -9,9 +9,8 @@ import yaml
 import json
 import subprocess
 import sys
-import os
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 import logging
 import re
 
@@ -64,7 +63,7 @@ class LambdaUpgrader:
                 if field not in func:
                     raise ValueError(f"Function {func.get('name', 'unknown')} missing '{field}'")
 
-    def _run_command(self, cmd: List[str], cwd: str = None, check: bool = True, timeout: int = 300) -> subprocess.CompletedProcess:
+    def run_command(self, cmd: List[str], cwd: Optional[str] = None, check: bool = True, timeout: int = 300) -> subprocess.CompletedProcess[str]:
         """Execute a shell command and return the result."""
         try:
             logger.debug(f"Running command: {' '.join(cmd)}")
@@ -129,10 +128,30 @@ class LambdaUpgrader:
             logger.error(f"Error updating template for {function_config['name']}: {e}")
             return False
 
+    def _get_source_folder(self, function_config: Dict[str, Any]) -> Path:
+        """Dynamically detect the source folder containing lambda_function.py or requirements.txt."""
+        function_dir = Path(self.workspace_root) / function_config['path']
+        
+        # Check if source folder is explicitly specified in config
+        if 'source_folder' in function_config:
+            return function_dir / function_config['source_folder']
+        
+        # Try to find lambda_function.py in subdirectories
+        for subdir in function_dir.iterdir():
+            if subdir.is_dir() and not subdir.name.startswith('.'):
+                lambda_file = subdir / 'lambda_function.py'
+                if lambda_file.exists():
+                    logger.debug(f"Found source folder: {subdir.name}")
+                    return subdir
+        
+        # Fallback to 'src' for backward compatibility
+        logger.warning(f"Could not detect source folder for {function_config['name']}, using 'src'")
+        return function_dir / 'src'
+    
     def _update_requirements(self, function_config: Dict[str, Any]) -> bool:
         """Update requirements.txt or add it if missing."""
-        function_dir = Path(self.workspace_root) / function_config['path']
-        requirements_file = function_dir / 'src' / 'requirements.txt'
+        source_folder = self._get_source_folder(function_config)
+        requirements_file = source_folder / 'requirements.txt'
         
         try:
             # Check if requirements.txt exists
@@ -140,7 +159,7 @@ class LambdaUpgrader:
                 logger.info(f"Found requirements.txt: {requirements_file}")
                 # Run pip upgrade on dependencies
                 logger.info(f"Upgrading dependencies from {requirements_file}")
-                result = self._run_command([
+                result = self.run_command([
                     'pip', 'install', '--upgrade', '-r', str(requirements_file)
                 ], check=False, timeout=120)
                 
@@ -162,7 +181,8 @@ class LambdaUpgrader:
 
     def _fix_python314_syntax(self, function_config: Dict[str, Any]) -> bool:
         """Fix outdated/incompatible Python syntax for Python 3.14."""
-        lambda_file = Path(self.workspace_root) / function_config['path'] / 'src' / 'lambda_function.py'
+        source_folder = self._get_source_folder(function_config)
+        lambda_file = source_folder / 'lambda_function.py'
         
         if not lambda_file.exists():
             logger.warning(f"Lambda function file not found: {lambda_file}")
@@ -263,7 +283,7 @@ class LambdaUpgrader:
             
             # Check if sam command exists
             try:
-                check_result = self._run_command([sam_cmd, '--version'], check=False)
+                check_result = self.run_command([sam_cmd, '--version'], check=False)
                 if check_result.returncode != 0:
                     logger.warning(f"SAM CLI not working properly, skipping build for {function_name}")
                     return True
@@ -271,7 +291,7 @@ class LambdaUpgrader:
                 logger.warning(f"SAM CLI not available: {e}. Skipping build for {function_name}")
                 return True
             
-            result = self._run_command(
+            result = self.run_command(
                 [sam_cmd, 'build'],
                 cwd=str(function_path),
                 check=False
@@ -294,7 +314,7 @@ class LambdaUpgrader:
 
     def upgrade_all_functions(self) -> Dict[str, bool]:
         """Upgrade all enabled functions."""
-        results = {}
+        results: Dict[str, bool] = {}
         functions = self.config.get('functions', [])
         
         enabled_functions = [f for f in functions if f.get('enabled', True)]
@@ -308,7 +328,7 @@ class LambdaUpgrader:
 
     def generate_terraform_variables(self) -> str:
         """Generate Terraform variables file from config."""
-        terraform_vars = {
+        terraform_vars: Dict[str, Dict[str, Any]] = {
             "lambda_functions": {}
         }
         
@@ -370,7 +390,7 @@ def main():
     
     if args.build_only:
         # Only build functions without upgrading
-        results = {}
+        results: Dict[str, bool] = {}
         functions = upgrader.config.get('functions', [])
         enabled_functions = [f for f in functions if f.get('enabled', True)]
         
@@ -382,7 +402,7 @@ def main():
             sam_cmd = 'sam'
             
             try:
-                result = upgrader._run_command(
+                result = upgrader.run_command(
                     [sam_cmd, 'build'],
                     cwd=str(function_path),
                     check=False

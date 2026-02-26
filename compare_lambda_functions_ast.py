@@ -102,9 +102,22 @@ class ASTComparator:
         if not self.func2_path.is_dir():
             raise ValueError(f"Function 2 directory not found: {func2_path}")
 
+    def _get_source_folder(self, func_path: Path) -> Path:
+        """Dynamically detect the source folder containing lambda_function.py."""
+        # Try to find lambda_function.py in subdirectories
+        for subdir in func_path.iterdir():
+            if subdir.is_dir() and not subdir.name.startswith('.'):
+                lambda_file = subdir / 'lambda_function.py'
+                if lambda_file.exists():
+                    return subdir
+        
+        # Fallback to 'src' for backward compatibility
+        return func_path / 'src'
+
     def _analyze_ast(self, func_path: Path) -> Optional[ASTAnalysis]:
         """Analyze Python code using Abstract Syntax Tree."""
-        lambda_file = func_path / "src" / "lambda_function.py"
+        source_folder = self._get_source_folder(func_path)
+        lambda_file = source_folder / "lambda_function.py"
         if not lambda_file.exists():
             return None
         
@@ -361,7 +374,8 @@ class ASTComparator:
 
     def _get_requirements(self, func_path: Path) -> 'FunctionDependencies':
         """Extract dependencies from requirements.txt."""
-        req_file = func_path / "src" / "requirements.txt"
+        source_folder = self._get_source_folder(func_path)
+        req_file = source_folder / "requirements.txt"
         packages: List[str] = []
         if req_file.exists():
             with open(req_file, 'r', encoding='utf-8') as f:

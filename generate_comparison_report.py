@@ -5,15 +5,16 @@ import json
 import sys
 from pathlib import Path
 from datetime import datetime
+from typing import Any, Dict, List
 
 DEFAULT_INPUT_DIR = "comparisons-ast"
 DEFAULT_OUTPUT = "comparison_report.html"
 
 
-def load_all_comparisons(input_dir: str) -> list:
+def load_all_comparisons(input_dir: str) -> List[Dict[str, Any]]:
     """Recursively load every *.json file under input_dir."""
     root = Path(input_dir)
-    comparisons = []
+    comparisons: List[Dict[str, Any]] = []
     for path in sorted(root.rglob("*.json")):
         try:
             with open(path, "r", encoding="utf-8") as f:
@@ -1060,6 +1061,12 @@ def main():
 
     html = generate_html(comparisons)
     output_path = Path(args.output)
+    
+    # Delete previous report if it exists
+    if output_path.exists():
+        output_path.unlink()
+        print(f"[~] Deleted previous report: {output_path.resolve()}")
+    
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html)
 
