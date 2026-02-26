@@ -24,6 +24,12 @@ TEST_DIR = CONFIG.get('build', {}).get('test_dir', 'tests')
 
 class LambdaTestHelper:
     """Helper class for loading and testing Lambda functions."""
+
+    @staticmethod
+    def get_source_folder(func_config: dict) -> Path:
+        """Return the source folder path for a function, defaulting to 'src'."""
+        src_folder = func_config.get('src_folder') or func_config.get('source_folder') or 'src'
+        return Path(func_config['path']) / src_folder
     
     @staticmethod
     def load_lambda_handler(function_name: str):
@@ -37,7 +43,7 @@ class LambdaTestHelper:
         if not func_config:
             raise ValueError(f"Function {function_name} not found in config")
         
-        lambda_file = Path(func_config['path']) / 'src' / 'lambda_function.py'
+        lambda_file = LambdaTestHelper.get_source_folder(func_config) / 'lambda_function.py'
         
         if not lambda_file.exists():
             raise FileNotFoundError(f"Lambda function file not found: {lambda_file}")
@@ -191,7 +197,7 @@ class TestAllFunctions:
     ], ids=lambda x: x['name'])
     def test_function_file_exists(self, func_config):
         """Test that lambda_function.py exists."""
-        lambda_file = Path(func_config['path']) / 'src' / 'lambda_function.py'
+        lambda_file = LambdaTestHelper.get_source_folder(func_config) / 'lambda_function.py'
         assert lambda_file.exists(), f"Lambda file not found: {lambda_file}"
     
     @pytest.mark.parametrize("func_config", [
@@ -245,7 +251,7 @@ class TestAllFunctions:
     ], ids=lambda x: x['name'])
     def test_requirements_python314_compatible(self, func_config):
         """Test that requirements.txt dependencies are compatible with Python 3.14."""
-        requirements_file = Path(func_config['path']) / 'src' / 'requirements.txt'
+        requirements_file = LambdaTestHelper.get_source_folder(func_config) / 'requirements.txt'
         
         if not requirements_file.exists():
             pytest.skip(f"No requirements.txt found for {func_config['name']}")
@@ -283,7 +289,7 @@ class TestAllFunctions:
     ], ids=lambda x: x['name'])
     def test_python314_syntax_compatibility(self, func_config):
         """Test that lambda_function.py syntax is compatible with Python 3.14."""
-        lambda_file = Path(func_config['path']) / 'src' / 'lambda_function.py'
+        lambda_file = LambdaTestHelper.get_source_folder(func_config) / 'lambda_function.py'
         
         # Read and compile the Python file
         try:
