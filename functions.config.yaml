@@ -19,7 +19,7 @@ functions:
       filter_suffix: ""
 
   - name: service_now_lambda
-    path: prod/service_now_lambda
+    path: rnd/service_now_lambda
     src_folder: service_now_lambda_app
     runtime: python3.13
     description: "Service_now_lambda Test function 2"
@@ -35,7 +35,7 @@ functions:
       filter_suffix: ""
 
   - name: myTestFunction2
-    path: prod/myTestFunction2
+    path: rnd/myTestFunction2
     runtime: python3.13
     description: "Test function 2"
     enabled: true
