@@ -136,13 +136,21 @@ class LambdaUpgrader:
         if 'source_folder' in function_config:
             return function_dir / function_config['source_folder']
         
+        # If function directory doesn't exist, return fallback
+        if not function_dir.exists():
+            logger.warning(f"Function directory not found: {function_dir}, using 'src' subfolder")
+            return function_dir / 'src'
+        
         # Try to find lambda_function.py in subdirectories
-        for subdir in function_dir.iterdir():
-            if subdir.is_dir() and not subdir.name.startswith('.'):
-                lambda_file = subdir / 'lambda_function.py'
-                if lambda_file.exists():
-                    logger.debug(f"Found source folder: {subdir.name}")
-                    return subdir
+        try:
+            for subdir in function_dir.iterdir():
+                if subdir.is_dir() and not subdir.name.startswith('.'):
+                    lambda_file = subdir / 'lambda_function.py'
+                    if lambda_file.exists():
+                        logger.debug(f"Found source folder: {subdir.name}")
+                        return subdir
+        except (OSError, PermissionError) as e:
+            logger.warning(f"Error scanning directory {function_dir}: {e}")
         
         # Fallback to 'src' for backward compatibility
         logger.warning(f"Could not detect source folder for {function_config['name']}, using 'src'")

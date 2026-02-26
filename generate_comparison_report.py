@@ -2,7 +2,6 @@
 """Generate a self-contained HTML report from all AST comparison JSON files."""
 
 import json
-import sys
 from pathlib import Path
 from datetime import datetime
 from typing import Any, Dict, List

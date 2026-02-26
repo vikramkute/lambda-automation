@@ -192,7 +192,7 @@ class TestUpdateRequirements:
         
         func_config = {'name': 'func1', 'path': str(tmp_path / "func1")}
         
-        with patch.object(upgrader, '_run_command') as mock_run:
+        with patch.object(upgrader, 'run_command') as mock_run:
             mock_run.return_value = MagicMock(returncode=0)
             result = upgrader._update_requirements(func_config)
             assert result
@@ -321,7 +321,7 @@ class TestUpgradeFunction:
             'description': 'Test'
         }
         
-        with patch.object(upgrader, '_run_command') as mock_run:
+        with patch.object(upgrader, 'run_command') as mock_run:
             mock_run.return_value = MagicMock(returncode=0)
             result = upgrader.upgrade_function(func_config)
             assert result
@@ -361,7 +361,7 @@ class TestUpgradeFunction:
             'description': 'Test'
         }
         
-        with patch.object(upgrader, '_run_command') as mock_run:
+        with patch.object(upgrader, 'run_command') as mock_run:
             mock_run.side_effect = FileNotFoundError("SAM not found")
             result = upgrader.upgrade_function(func_config)
             assert result  # Should return True and skip SAM build
@@ -470,7 +470,7 @@ class TestReportResults:
 
 
 class TestRunCommand:
-    """Test _run_command method"""
+    """Test run_command method"""
 
     @pytest.fixture
     def upgrader(self, tmp_path):
@@ -490,7 +490,7 @@ class TestRunCommand:
         """Test successful command execution"""
         with patch('subprocess.run') as mock_run:
             mock_run.return_value = MagicMock(returncode=0, stdout='', stderr='')
-            result = upgrader._run_command(['echo', 'test'])
+            result = upgrader.run_command(['echo', 'test'])
             assert result.returncode == 0
 
     def test_run_command_failure(self, upgrader):
@@ -498,13 +498,13 @@ class TestRunCommand:
         with patch('subprocess.run') as mock_run:
             mock_run.return_value = MagicMock(returncode=1, stdout='', stderr='error')
             with pytest.raises(subprocess.CalledProcessError):
-                upgrader._run_command(['false'], check=True)
+                upgrader.run_command(['false'], check=True)
 
     def test_run_command_timeout(self, upgrader):
         """Test command timeout"""
         with patch('subprocess.run', side_effect=subprocess.TimeoutExpired('cmd', 1)):
             with pytest.raises(subprocess.TimeoutExpired):
-                upgrader._run_command(['sleep', '10'], timeout=1)
+                upgrader.run_command(['sleep', '10'], timeout=1)
 
 
 if __name__ == '__main__':
