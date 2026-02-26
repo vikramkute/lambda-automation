@@ -18,8 +18,26 @@ with open(CONFIG_PATH, 'r') as f:
     CONFIG = yaml.safe_load(f)
 
 
+def get_api_gateway_functions():
+    """Get enabled API Gateway functions, with safe handling for empty lists."""
+    functions = [
+        f for f in CONFIG['functions'] 
+        if f.get('enabled', True) and f.get('api_gateway', {}).get('enabled', False)
+    ]
+    if not functions:
+        # Return a skipmarker when no API Gateway functions exist
+        return [pytest.param(None, marks=pytest.mark.skip(reason="No API Gateway functions enabled"))]
+    return functions
+
+
 class APIGatewayTestHelper:
     """Helper for API Gateway Lambda function testing."""
+    
+    @staticmethod
+    def get_source_folder(func_config: dict) -> Path:
+        """Return the source folder path for a function, defaulting to 'src'."""
+        src_folder = func_config.get('src_folder') or func_config.get('source_folder') or 'src'
+        return Path(func_config['path']) / src_folder
     
     @staticmethod
     def load_handler(function_name):
@@ -28,7 +46,7 @@ class APIGatewayTestHelper:
         if not func_config:
             raise ValueError(f"Function {function_name} not found")
         
-        lambda_file = Path(func_config['path']) / 'src' / 'lambda_function.py'
+        lambda_file = APIGatewayTestHelper.get_source_folder(func_config) / 'lambda_function.py'
         spec = importlib.util.spec_from_file_location(function_name, lambda_file)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
@@ -61,10 +79,7 @@ def lambda_context():
 class TestAPIGatewayPOSTRequests:
     """Test POST request handling."""
     
-    @pytest.mark.parametrize("func_config", [
-        f for f in CONFIG['functions'] 
-        if f.get('enabled', True) and f.get('api_gateway', {}).get('enabled', False)
-    ], ids=lambda x: x['name'])
+    @pytest.mark.parametrize("func_config", get_api_gateway_functions(), ids=lambda x: x['name'] if x else 'none')
     @mock_aws
     def test_post_with_valid_json(self, func_config, lambda_context):
         """Test POST request with valid JSON body."""
@@ -83,10 +98,7 @@ class TestAPIGatewayPOSTRequests:
         assert response['statusCode'] in [200, 201]
         assert 'body' in response
     
-    @pytest.mark.parametrize("func_config", [
-        f for f in CONFIG['functions'] 
-        if f.get('enabled', True) and f.get('api_gateway', {}).get('enabled', False)
-    ], ids=lambda x: x['name'])
+    @pytest.mark.parametrize("func_config", get_api_gateway_functions(), ids=lambda x: x['name'] if x else 'none')
     @mock_aws
     def test_post_with_invalid_json(self, func_config, lambda_context):
         """Test POST request with invalid JSON."""
@@ -104,10 +116,7 @@ class TestAPIGatewayPOSTRequests:
         response = handler(event, lambda_context)
         assert response['statusCode'] in [400, 500]
     
-    @pytest.mark.parametrize("func_config", [
-        f for f in CONFIG['functions'] 
-        if f.get('enabled', True) and f.get('api_gateway', {}).get('enabled', False)
-    ], ids=lambda x: x['name'])
+    @pytest.mark.parametrize("func_config", get_api_gateway_functions(), ids=lambda x: x['name'] if x else 'none')
     @mock_aws
     def test_post_with_missing_body(self, func_config, lambda_context):
         """Test POST request with missing body."""
@@ -122,10 +131,7 @@ class TestAPIGatewayPOSTRequests:
         response = handler(event, lambda_context)
         assert 'statusCode' in response
     
-    @pytest.mark.parametrize("func_config", [
-        f for f in CONFIG['functions'] 
-        if f.get('enabled', True) and f.get('api_gateway', {}).get('enabled', False)
-    ], ids=lambda x: x['name'])
+    @pytest.mark.parametrize("func_config", get_api_gateway_functions(), ids=lambda x: x['name'] if x else 'none')
     @mock_aws
     def test_post_with_empty_body(self, func_config, lambda_context):
         """Test POST request with empty body."""
@@ -144,10 +150,7 @@ class TestAPIGatewayPOSTRequests:
 class TestAPIGatewayGETRequests:
     """Test GET request handling."""
     
-    @pytest.mark.parametrize("func_config", [
-        f for f in CONFIG['functions'] 
-        if f.get('enabled', True) and f.get('api_gateway', {}).get('enabled', False)
-    ], ids=lambda x: x['name'])
+    @pytest.mark.parametrize("func_config", get_api_gateway_functions(), ids=lambda x: x['name'] if x else 'none')
     @mock_aws
     def test_get_with_query_params(self, func_config, lambda_context):
         """Test GET request with query parameters."""
@@ -166,10 +169,7 @@ class TestAPIGatewayGETRequests:
         assert 'statusCode' in response
         assert 'body' in response
     
-    @pytest.mark.parametrize("func_config", [
-        f for f in CONFIG['functions'] 
-        if f.get('enabled', True) and f.get('api_gateway', {}).get('enabled', False)
-    ], ids=lambda x: x['name'])
+    @pytest.mark.parametrize("func_config", get_api_gateway_functions(), ids=lambda x: x['name'] if x else 'none')
     @mock_aws
     def test_get_without_query_params(self, func_config, lambda_context):
         """Test GET request without query parameters."""
@@ -188,10 +188,7 @@ class TestAPIGatewayGETRequests:
 class TestAPIGatewayHeaders:
     """Test header handling."""
     
-    @pytest.mark.parametrize("func_config", [
-        f for f in CONFIG['functions'] 
-        if f.get('enabled', True) and f.get('api_gateway', {}).get('enabled', False)
-    ], ids=lambda x: x['name'])
+    @pytest.mark.parametrize("func_config", get_api_gateway_functions(), ids=lambda x: x['name'] if x else 'none')
     @mock_aws
     def test_cors_headers_present(self, func_config, lambda_context):
         """Test that response includes CORS headers."""
@@ -209,10 +206,7 @@ class TestAPIGatewayHeaders:
         response = handler(event, lambda_context)
         assert 'statusCode' in response
     
-    @pytest.mark.parametrize("func_config", [
-        f for f in CONFIG['functions'] 
-        if f.get('enabled', True) and f.get('api_gateway', {}).get('enabled', False)
-    ], ids=lambda x: x['name'])
+    @pytest.mark.parametrize("func_config", get_api_gateway_functions(), ids=lambda x: x['name'] if x else 'none')
     @mock_aws
     def test_content_type_json(self, func_config, lambda_context):
         """Test response with JSON content type."""
@@ -236,10 +230,7 @@ class TestAPIGatewayHeaders:
 class TestAPIGatewayErrorHandling:
     """Test error scenarios."""
     
-    @pytest.mark.parametrize("func_config", [
-        f for f in CONFIG['functions'] 
-        if f.get('enabled', True) and f.get('api_gateway', {}).get('enabled', False)
-    ], ids=lambda x: x['name'])
+    @pytest.mark.parametrize("func_config", get_api_gateway_functions(), ids=lambda x: x['name'] if x else 'none')
     @mock_aws
     def test_unsupported_http_method(self, func_config, lambda_context):
         """Test unsupported HTTP method."""
@@ -254,10 +245,7 @@ class TestAPIGatewayErrorHandling:
         response = handler(event, lambda_context)
         assert 'statusCode' in response
     
-    @pytest.mark.parametrize("func_config", [
-        f for f in CONFIG['functions'] 
-        if f.get('enabled', True) and f.get('api_gateway', {}).get('enabled', False)
-    ], ids=lambda x: x['name'])
+    @pytest.mark.parametrize("func_config", get_api_gateway_functions(), ids=lambda x: x['name'] if x else 'none')
     @mock_aws
     def test_malformed_event(self, func_config, lambda_context):
         """Test with malformed event structure."""
@@ -275,10 +263,7 @@ class TestAPIGatewayErrorHandling:
         except Exception:
             pass
     
-    @pytest.mark.parametrize("func_config", [
-        f for f in CONFIG['functions'] 
-        if f.get('enabled', True) and f.get('api_gateway', {}).get('enabled', False)
-    ], ids=lambda x: x['name'])
+    @pytest.mark.parametrize("func_config", get_api_gateway_functions(), ids=lambda x: x['name'] if x else 'none')
     @mock_aws
     def test_large_payload(self, func_config, lambda_context):
         """Test with large JSON payload."""
@@ -298,10 +283,7 @@ class TestAPIGatewayErrorHandling:
 class TestAPIGatewayResponseFormat:
     """Test response format compliance."""
     
-    @pytest.mark.parametrize("func_config", [
-        f for f in CONFIG['functions'] 
-        if f.get('enabled', True) and f.get('api_gateway', {}).get('enabled', False)
-    ], ids=lambda x: x['name'])
+    @pytest.mark.parametrize("func_config", get_api_gateway_functions(), ids=lambda x: x['name'] if x else 'none')
     @mock_aws
     def test_response_has_required_fields(self, func_config, lambda_context):
         """Test response contains required fields."""
@@ -321,10 +303,7 @@ class TestAPIGatewayResponseFormat:
         assert 'body' in response
         assert isinstance(response['statusCode'], int)
     
-    @pytest.mark.parametrize("func_config", [
-        f for f in CONFIG['functions'] 
-        if f.get('enabled', True) and f.get('api_gateway', {}).get('enabled', False)
-    ], ids=lambda x: x['name'])
+    @pytest.mark.parametrize("func_config", get_api_gateway_functions(), ids=lambda x: x['name'] if x else 'none')
     @mock_aws
     def test_response_body_is_string(self, func_config, lambda_context):
         """Test response body is string."""

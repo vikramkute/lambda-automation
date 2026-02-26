@@ -100,7 +100,7 @@ class TestValidateConfig:
         """Test validation with valid config"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 128, 'timeout': 30}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 128, 'timeout': 30}
             ]
         }
         config_file = tmp_path / "config.yaml"
@@ -119,7 +119,7 @@ class TestUpdateTemplateYaml:
         """Create upgrader instance"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 256, 'timeout': 60, 'description': 'Test function'}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 256, 'timeout': 60, 'description': 'Test function'}
             ]
         }
         config_file = tmp_path / "config.yaml"
@@ -138,7 +138,7 @@ class TestUpdateTemplateYaml:
         func_config = {
             'name': 'func1',
             'path': str(func_dir),
-            'runtime': 'python3.14',
+            'runtime': 'python3.13',
             'memory': 256,
             'timeout': 60,
             'description': 'Test function'
@@ -148,7 +148,7 @@ class TestUpdateTemplateYaml:
         assert result
         
         content = template.read_text()
-        assert 'python3.14' in content
+        assert 'python3.13' in content
         assert '256' in content
         assert '60' in content
 
@@ -157,7 +157,7 @@ class TestUpdateTemplateYaml:
         func_config = {
             'name': 'func1',
             'path': str(tmp_path / "nonexistent"),
-            'runtime': 'python3.14',
+            'runtime': 'python3.13',
             'memory': 128,
             'timeout': 30
         }
@@ -174,7 +174,7 @@ class TestUpdateRequirements:
         """Create upgrader instance"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 128, 'timeout': 30}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 128, 'timeout': 30}
             ]
         }
         config_file = tmp_path / "config.yaml"
@@ -218,7 +218,7 @@ class TestFixPython314Syntax:
         """Create upgrader instance"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 128, 'timeout': 30}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 128, 'timeout': 30}
             ]
         }
         config_file = tmp_path / "config.yaml"
@@ -295,7 +295,7 @@ class TestUpgradeFunction:
         """Create upgrader instance"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 128, 'timeout': 30, 'description': 'Test'}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 128, 'timeout': 30, 'description': 'Test'}
             ]
         }
         config_file = tmp_path / "config.yaml"
@@ -315,7 +315,7 @@ class TestUpgradeFunction:
         func_config = {
             'name': 'func1',
             'path': str(func_dir),
-            'runtime': 'python3.14',
+            'runtime': 'python3.13',
             'memory': 128,
             'timeout': 30,
             'description': 'Test'
@@ -336,7 +336,7 @@ class TestUpgradeFunction:
         func_config = {
             'name': 'func1',
             'path': str(func_dir),
-            'runtime': 'python3.14',
+            'runtime': 'python3.13',
             'memory': 128,
             'timeout': 30
         }
@@ -355,7 +355,7 @@ class TestUpgradeFunction:
         func_config = {
             'name': 'func1',
             'path': str(func_dir),
-            'runtime': 'python3.14',
+            'runtime': 'python3.13',
             'memory': 128,
             'timeout': 30,
             'description': 'Test'
@@ -375,9 +375,9 @@ class TestUpgradeAllFunctions:
         """Create upgrader instance"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 128, 'timeout': 30, 'enabled': True, 'description': 'Test1'},
-                {'name': 'func2', 'path': './func2', 'runtime': 'python3.14', 'memory': 128, 'timeout': 30, 'enabled': True, 'description': 'Test2'},
-                {'name': 'func3', 'path': './func3', 'runtime': 'python3.14', 'memory': 128, 'timeout': 30, 'enabled': False, 'description': 'Test3'}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 128, 'timeout': 30, 'enabled': True, 'description': 'Test1'},
+                {'name': 'func2', 'path': './func2', 'runtime': 'python3.13', 'memory': 128, 'timeout': 30, 'enabled': True, 'description': 'Test2'},
+                {'name': 'func3', 'path': './func3', 'runtime': 'python3.13', 'memory': 128, 'timeout': 30, 'enabled': False, 'description': 'Test3'}
             ]
         }
         config_file = tmp_path / "config.yaml"
@@ -417,7 +417,7 @@ class TestGenerateTerraformVariables:
                 {
                     'name': 'func1',
                     'path': './func1',
-                    'runtime': 'python3.14',
+                    'runtime': 'python3.13',
                     'memory': 128,
                     'timeout': 30,
                     'description': 'Test function',
@@ -445,7 +445,7 @@ class TestReportResults:
         """Create upgrader instance"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 128, 'timeout': 30}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 128, 'timeout': 30}
             ]
         }
         config_file = tmp_path / "config.yaml"
@@ -477,7 +477,7 @@ class TestRunCommand:
         """Create upgrader instance"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 128, 'timeout': 30}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 128, 'timeout': 30}
             ]
         }
         config_file = tmp_path / "config.yaml"

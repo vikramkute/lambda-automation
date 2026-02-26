@@ -92,7 +92,7 @@ Resources:
   LambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
-      Runtime: python3.14
+      Runtime: python3.13
       MemorySize: 256
       Timeout: 60
       Handler: lambda_function.lambda_handler
@@ -122,7 +122,7 @@ Resources:
         config2 = comparator._extract_function_config("func2", func2)
         
         assert config1.runtime == "python3.12"
-        assert config2.runtime == "python3.14"
+        assert config2.runtime == "python3.13"
         assert config1.memory == 128
         assert config2.memory == 256
     

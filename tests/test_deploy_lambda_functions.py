@@ -22,7 +22,7 @@ class TestLambdaDeployerInit:
         """Sample configuration"""
         return {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 128, 'timeout': 30, 'enabled': True}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 128, 'timeout': 30, 'enabled': True}
             ],
             'build': {'artifact_dir': '.build', 'test_dir': 'tests'}
         }
@@ -57,7 +57,7 @@ class TestValidateLambdaLimits:
         """Test validation with valid memory and timeout"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 512, 'timeout': 60, 'enabled': True}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 512, 'timeout': 60, 'enabled': True}
             ]
         }
         config_file = tmp_path / "config.yaml"
@@ -71,7 +71,7 @@ class TestValidateLambdaLimits:
         """Test validation with memory below minimum"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 64, 'timeout': 30, 'enabled': True}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 64, 'timeout': 30, 'enabled': True}
             ]
         }
         config_file = tmp_path / "config.yaml"
@@ -85,7 +85,7 @@ class TestValidateLambdaLimits:
         """Test validation with memory above maximum"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 20000, 'timeout': 30, 'enabled': True}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 20000, 'timeout': 30, 'enabled': True}
             ]
         }
         config_file = tmp_path / "config.yaml"
@@ -99,7 +99,7 @@ class TestValidateLambdaLimits:
         """Test validation with timeout below minimum"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 128, 'timeout': 0, 'enabled': True}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 128, 'timeout': 0, 'enabled': True}
             ]
         }
         config_file = tmp_path / "config.yaml"
@@ -113,7 +113,7 @@ class TestValidateLambdaLimits:
         """Test validation with timeout above maximum"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 128, 'timeout': 1000, 'enabled': True}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 128, 'timeout': 1000, 'enabled': True}
             ]
         }
         config_file = tmp_path / "config.yaml"
@@ -132,7 +132,7 @@ class TestPackageFunction:
         """Create deployer instance"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 128, 'timeout': 30, 'enabled': True}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 128, 'timeout': 30, 'enabled': True}
             ],
             'build': {'artifact_dir': '.build'}
         }
@@ -183,7 +183,7 @@ class TestGenerateDeploymentConfig:
         """Test basic deployment config generation"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 128, 'timeout': 30, 'enabled': True, 'description': 'Test function'}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 128, 'timeout': 30, 'enabled': True, 'description': 'Test function'}
             ],
             'global': {'aws_region': 'us-east-1'}
         }
@@ -202,8 +202,8 @@ class TestGenerateDeploymentConfig:
         """Test that disabled functions are excluded"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 128, 'timeout': 30, 'enabled': True},
-                {'name': 'func2', 'path': './func2', 'runtime': 'python3.14', 'memory': 128, 'timeout': 30, 'enabled': False}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 128, 'timeout': 30, 'enabled': True},
+                {'name': 'func2', 'path': './func2', 'runtime': 'python3.13', 'memory': 128, 'timeout': 30, 'enabled': False}
             ]
         }
         config_file = tmp_path / "config.yaml"
@@ -223,7 +223,7 @@ class TestGenerateDeploymentConfig:
                 {
                     'name': 'func1', 
                     'path': './func1', 
-                    'runtime': 'python3.14', 
+                    'runtime': 'python3.13', 
                     'memory': 128, 
                     'timeout': 30, 
                     'enabled': True,
@@ -254,7 +254,7 @@ class TestApplyTerraform:
         """Create deployer instance"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 128, 'timeout': 30, 'enabled': True}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 128, 'timeout': 30, 'enabled': True}
             ]
         }
         config_file = tmp_path / "config.yaml"
@@ -300,7 +300,7 @@ class TestRollbackDeployment:
         """Create deployer instance"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 128, 'timeout': 30, 'enabled': True}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 128, 'timeout': 30, 'enabled': True}
             ]
         }
         config_file = tmp_path / "config.yaml"
@@ -335,7 +335,7 @@ class TestCheckExistingFunctions:
         """Create deployer instance"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 128, 'timeout': 30, 'enabled': True}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 128, 'timeout': 30, 'enabled': True}
             ]
         }
         config_file = tmp_path / "config.yaml"
@@ -378,7 +378,7 @@ class TestValidateTerraformVars:
         """Create deployer instance"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 128, 'timeout': 30, 'enabled': True}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 128, 'timeout': 30, 'enabled': True}
             ]
         }
         config_file = tmp_path / "config.yaml"
@@ -413,7 +413,7 @@ class TestRunCommand:
         """Create deployer instance"""
         config = {
             'functions': [
-                {'name': 'func1', 'path': './func1', 'runtime': 'python3.14', 'memory': 128, 'timeout': 30, 'enabled': True}
+                {'name': 'func1', 'path': './func1', 'runtime': 'python3.13', 'memory': 128, 'timeout': 30, 'enabled': True}
             ]
         }
         config_file = tmp_path / "config.yaml"

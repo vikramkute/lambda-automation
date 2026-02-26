@@ -224,7 +224,7 @@ class TestAllFunctions:
     ], ids=lambda x: x['name'])
     def test_function_runtime_is_latest(self, func_config):
         """Test that functions use supported Python versions."""
-        supported_runtimes = ['python3.14']
+        supported_runtimes = ['python3.13']
         assert func_config['runtime'] in supported_runtimes, \
             f"Unsupported runtime: {func_config['runtime']}"
     
@@ -232,7 +232,7 @@ class TestAllFunctions:
         f for f in CONFIG.get('functions', []) if f.get('enabled', True)
     ], ids=lambda x: x['name'])
     def test_template_uses_python314(self, func_config):
-        """Test that template.yml uses Python 3.14 runtime."""
+        """Test that template.yml uses Python 3.13 runtime."""
         template_file = Path(func_config['path']) / 'template.yml'
         try:
             with open(template_file, 'r') as f:
@@ -243,14 +243,14 @@ class TestAllFunctions:
         
         # Simple text search for runtime instead of YAML parsing
         # This avoids issues with CloudFormation intrinsic functions like !Sub
-        if 'Runtime: python3.14' not in template_content:
-            pytest.fail(f"Template {template_file} does not use python3.14 runtime")
+        if 'Runtime: python3.13' not in template_content:
+            pytest.fail(f"Template {template_file} does not use python3.13 runtime")
     
     @pytest.mark.parametrize("func_config", [
         f for f in CONFIG.get('functions', []) if f.get('enabled', True)
     ], ids=lambda x: x['name'])
     def test_requirements_python314_compatible(self, func_config):
-        """Test that requirements.txt dependencies are compatible with Python 3.14."""
+        """Test that requirements.txt dependencies are compatible with Python 3.13."""
         requirements_file = LambdaTestHelper.get_source_folder(func_config) / 'requirements.txt'
         
         if not requirements_file.exists():
@@ -269,7 +269,7 @@ class TestAllFunctions:
         if not requirements:
             pytest.skip(f"No dependencies in requirements.txt for {func_config['name']}")
         
-        # Test pip install with Python 3.14 compatibility check
+        # Test pip install with Python 3.13 compatibility check
         try:
             result = subprocess.run([
                 'python', '-m', 'pip', 'install', '--dry-run', '--quiet'
@@ -288,7 +288,7 @@ class TestAllFunctions:
         f for f in CONFIG.get('functions', []) if f.get('enabled', True)
     ], ids=lambda x: x['name'])
     def test_python314_syntax_compatibility(self, func_config):
-        """Test that lambda_function.py syntax is compatible with Python 3.14."""
+        """Test that lambda_function.py syntax is compatible with Python 3.13."""
         lambda_file = LambdaTestHelper.get_source_folder(func_config) / 'lambda_function.py'
         
         # Read and compile the Python file
@@ -299,10 +299,10 @@ class TestAllFunctions:
             pytest.fail(f"Failed to read {lambda_file}: {e}")
         
         try:
-            # Compile with Python 3.14 syntax checking
+            # Compile with Python 3.13 syntax checking
             compile(source_code, str(lambda_file), 'exec')
         except SyntaxError as e:
-            pytest.fail(f"Python 3.14 syntax error in {lambda_file}: {e}")
+            pytest.fail(f"Python 3.13 syntax error in {lambda_file}: {e}")
         except Exception as e:
             pytest.fail(f"Compilation error in {lambda_file}: {e}")
     
