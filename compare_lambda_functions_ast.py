@@ -126,135 +126,155 @@ class ASTComparator:
         return func_path / 'src'
 
     def _analyze_ast(self, func_path: Path) -> Optional[ASTAnalysis]:
-        """Analyze Python code using Abstract Syntax Tree."""
+        """Analyze Python code using Abstract Syntax Tree for all Python files in src folder."""
         source_folder = self._get_source_folder(func_path)
         
-        # Try to find the source file (lambda_function.py, index.py, or {foldername}.py)
-        python_file = None
-        for candidate in ['lambda_function.py', 'index.py', f'{source_folder.name}.py']:
-            candidate_path = source_folder / candidate
-            if candidate_path.exists():
-                python_file = candidate_path
-                break
+        # Find all Python files in the source folder
+        python_files = list(source_folder.glob('*.py'))
         
-        if not python_file:
+        if not python_files:
             return None
         
-        try:
-            with open(python_file, 'r') as f:
-                code = f.read()
+        # Aggregate results from all Python files
+        all_functions = []
+        all_classes = []
+        all_imports = []
+        all_decorators = []
+        all_external_calls = set()
+        all_variables_defined = []
+        total_cyclomatic_complexity = 0
+        total_lines = 0
+        total_statements = 0
+        has_lambda_handler = False
+        
+        for python_file in python_files:
+            try:
+                with open(python_file, 'r', encoding='utf-8') as f:
+                    code = f.read()
+                
+                tree = ast.parse(code)
+                total_lines += len(code.split('\n'))
+                
+                # Extract various code elements
+                functions = []
+                classes = []
+                imports = []
+                decorators = []
+                external_calls = set()
+                variables_defined = []
+                cyclomatic_complexity = 1  # base complexity per file
+                file_statements = 0
+                file_statements = 0
             
-            tree = ast.parse(code)
-            
-            # Extract various code elements
-            functions = []
-            classes = []
-            imports = []
-            decorators = []
-            external_calls = set()
-            variables_defined = []
-            cyclomatic_complexity = 1  # base complexity
-            total_statements = 0
-            has_lambda_handler = False
-            
-            class ASTVisitor(ast.NodeVisitor):
-                def visit_FunctionDef(self, node):
-                    nonlocal cyclomatic_complexity, has_lambda_handler
-                    functions.append(node.name)
-                    if node.name == 'lambda_handler':
-                        has_lambda_handler = True
+                class ASTVisitor(ast.NodeVisitor):
+                    def visit_FunctionDef(self, node):
+                        nonlocal cyclomatic_complexity, has_lambda_handler
+                        functions.append(node.name)
+                        if node.name == 'lambda_handler':
+                            has_lambda_handler = True
+                        
+                        # Extract decorators
+                        for decorator in node.decorator_list:
+                            if isinstance(decorator, ast.Name):
+                                decorators.append(decorator.id)
+                            elif isinstance(decorator, ast.Attribute):
+                                decorators.append(decorator.attr)
+                        
+                        # Count conditional branches for cyclomatic complexity
+                        for subnode in ast.walk(node):
+                            if isinstance(subnode, (ast.If, ast.While, ast.For, ast.ExceptHandler)):
+                                cyclomatic_complexity += 1
+                        
+                        self.generic_visit(node)
                     
-                    # Extract decorators
-                    for decorator in node.decorator_list:
-                        if isinstance(decorator, ast.Name):
-                            decorators.append(decorator.id)
-                        elif isinstance(decorator, ast.Attribute):
-                            decorators.append(decorator.attr)
+                    def visit_ClassDef(self, node):
+                        classes.append(node.name)
+                        self.generic_visit(node)
                     
-                    # Count conditional branches for cyclomatic complexity
-                    for subnode in ast.walk(node):
-                        if isinstance(subnode, (ast.If, ast.While, ast.For, ast.ExceptHandler)):
-                            cyclomatic_complexity += 1
+                    def visit_Import(self, node):
+                        for alias in node.names:
+                            imports.append(alias.name)
+                        self.generic_visit(node)
                     
-                    self.generic_visit(node)
+                    def visit_ImportFrom(self, node):
+                        if node.module:
+                            imports.append(node.module)
+                        self.generic_visit(node)
+                    
+                    def visit_Call(self, node):
+                        nonlocal external_calls
+                        # Built-in functions and common stdlib names to exclude
+                        _BUILTINS = {
+                            'print', 'len', 'str', 'int', 'float', 'list', 'dict',
+                            'set', 'tuple', 'bool', 'bytes', 'isinstance', 'issubclass',
+                            'type', 'range', 'enumerate', 'zip', 'map', 'filter',
+                            'sorted', 'reversed', 'hasattr', 'getattr', 'setattr',
+                            'vars', 'dir', 'id', 'hash', 'repr', 'open', 'super',
+                            'staticmethod', 'classmethod', 'property', 'next', 'iter',
+                            'min', 'max', 'sum', 'abs', 'round', 'any', 'all',
+                        }
+                        # For attribute calls, only track calls on known external
+                        # service-like objects (not local variable methods)
+                        _SKIP_ATTRS = {
+                            'append', 'extend', 'pop', 'get', 'items', 'keys',
+                            'values', 'update', 'split', 'join', 'strip', 'upper',
+                            'lower', 'replace', 'encode', 'decode', 'format',
+                            'read', 'write', 'close', 'seek', 'tell',
+                            'startswith', 'endswith', 'find', 'count',
+                            'isoformat', 'strftime', 'strptime', 'utcnow', 'now',
+                            'dumps', 'loads', 'load', 'dump',
+                        }
+                        if isinstance(node.func, ast.Attribute):
+                            if isinstance(node.func.value, ast.Name):
+                                # Only track if attribute is not a common stdlib/local method
+                                if node.func.attr not in _SKIP_ATTRS:
+                                    external_calls.add(f"{node.func.value.id}.{node.func.attr}")
+                        elif isinstance(node.func, ast.Name):
+                            if node.func.id not in _BUILTINS:
+                                external_calls.add(node.func.id)
+                        self.generic_visit(node)
+                    
+                    def visit_Assign(self, node):
+                        for target in node.targets:
+                            if isinstance(target, ast.Name):
+                                variables_defined.append(target.id)
+                        self.generic_visit(node)
                 
-                def visit_ClassDef(self, node):
-                    classes.append(node.name)
-                    self.generic_visit(node)
+                # Visit all nodes
+                visitor = ASTVisitor()
+                visitor.visit(tree)
                 
-                def visit_Import(self, node):
-                    for alias in node.names:
-                        imports.append(alias.name)
-                    self.generic_visit(node)
+                # Count statements in this file
+                for node in ast.walk(tree):
+                    if isinstance(node, (ast.FunctionDef, ast.Assign, ast.Return, ast.If)):
+                        file_statements += 1
                 
-                def visit_ImportFrom(self, node):
-                    if node.module:
-                        imports.append(node.module)
-                    self.generic_visit(node)
+                # Aggregate results
+                all_functions.extend(functions)
+                all_classes.extend(classes)
+                all_imports.extend(imports)
+                all_decorators.extend(decorators)
+                all_external_calls.update(external_calls)
+                all_variables_defined.extend(variables_defined)
+                total_cyclomatic_complexity += cyclomatic_complexity
+                total_statements += file_statements
                 
-                def visit_Call(self, node):
-                    nonlocal external_calls
-                    # Built-in functions and common stdlib names to exclude
-                    _BUILTINS = {
-                        'print', 'len', 'str', 'int', 'float', 'list', 'dict',
-                        'set', 'tuple', 'bool', 'bytes', 'isinstance', 'issubclass',
-                        'type', 'range', 'enumerate', 'zip', 'map', 'filter',
-                        'sorted', 'reversed', 'hasattr', 'getattr', 'setattr',
-                        'vars', 'dir', 'id', 'hash', 'repr', 'open', 'super',
-                        'staticmethod', 'classmethod', 'property', 'next', 'iter',
-                        'min', 'max', 'sum', 'abs', 'round', 'any', 'all',
-                    }
-                    # For attribute calls, only track calls on known external
-                    # service-like objects (not local variable methods)
-                    _SKIP_ATTRS = {
-                        'append', 'extend', 'pop', 'get', 'items', 'keys',
-                        'values', 'update', 'split', 'join', 'strip', 'upper',
-                        'lower', 'replace', 'encode', 'decode', 'format',
-                        'read', 'write', 'close', 'seek', 'tell',
-                        'startswith', 'endswith', 'find', 'count',
-                        'isoformat', 'strftime', 'strptime', 'utcnow', 'now',
-                        'dumps', 'loads', 'load', 'dump',
-                    }
-                    if isinstance(node.func, ast.Attribute):
-                        if isinstance(node.func.value, ast.Name):
-                            # Only track if attribute is not a common stdlib/local method
-                            if node.func.attr not in _SKIP_ATTRS:
-                                external_calls.add(f"{node.func.value.id}.{node.func.attr}")
-                    elif isinstance(node.func, ast.Name):
-                        if node.func.id not in _BUILTINS:
-                            external_calls.add(node.func.id)
-                    self.generic_visit(node)
-                
-                def visit_Assign(self, node):
-                    for target in node.targets:
-                        if isinstance(target, ast.Name):
-                            variables_defined.append(target.id)
-                    self.generic_visit(node)
-            
-            # Visit all nodes
-            visitor = ASTVisitor()
-            visitor.visit(tree)
-            
-            # Count statements
-            for node in ast.walk(tree):
-                if isinstance(node, (ast.FunctionDef, ast.Assign, ast.Return, ast.If)):
-                    total_statements += 1
-            
-            return ASTAnalysis(
-                functions=functions,
-                classes=classes,
-                imports=sorted(list(set(imports))),
-                decorators=sorted(list(set(decorators))),
-                cyclomatic_complexity=cyclomatic_complexity,
-                total_lines=len(code.split('\n')),
-                total_statements=total_statements,
-                has_lambda_handler=has_lambda_handler,
-                external_calls=sorted(list(external_calls)),
-                variables_defined=sorted(list(set(variables_defined)))
-            )
-        except (SyntaxError, OSError) as e:
-            print(f"[!] Error analyzing {python_file}: {e}")
-            return None
+            except (SyntaxError, OSError) as e:
+                print(f"[!] Error analyzing {python_file}: {e}")
+                continue
+        
+        return ASTAnalysis(
+            functions=all_functions,
+            classes=all_classes,
+            imports=sorted(list(set(all_imports))),
+            decorators=sorted(list(set(all_decorators))),
+            cyclomatic_complexity=total_cyclomatic_complexity,
+            total_lines=total_lines,
+            total_statements=total_statements,
+            has_lambda_handler=has_lambda_handler,
+            external_calls=sorted(list(all_external_calls)),
+            variables_defined=sorted(list(set(all_variables_defined)))
+        )
 
     def _compare_ast_analysis(self, ast1: Optional[ASTAnalysis], ast2: Optional[ASTAnalysis]) -> Dict[str, Any]:
         """Compare AST analysis results from two functions."""
