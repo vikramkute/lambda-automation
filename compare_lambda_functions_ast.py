@@ -103,12 +103,23 @@ class ASTComparator:
             raise ValueError(f"Function 2 directory not found: {func2_path}")
 
     def _get_source_folder(self, func_path: Path) -> Path:
-        """Dynamically detect the source folder containing lambda_function.py."""
-        # Try to find lambda_function.py in subdirectories
+        """Dynamically detect the source folder containing lambda_function.py, index.py, or {foldername}.py."""
+        # Try to find lambda_function.py, index.py, or {foldername}.py in subdirectories
         for subdir in func_path.iterdir():
             if subdir.is_dir() and not subdir.name.startswith('.'):
+                # Check for lambda_function.py
                 lambda_file = subdir / 'lambda_function.py'
                 if lambda_file.exists():
+                    return subdir
+                
+                # Check for index.py
+                index_file = subdir / 'index.py'
+                if index_file.exists():
+                    return subdir
+                
+                # Check for {foldername}.py
+                folder_file = subdir / f'{subdir.name}.py'
+                if folder_file.exists():
                     return subdir
         
         # Fallback to 'src' for backward compatibility
@@ -117,12 +128,20 @@ class ASTComparator:
     def _analyze_ast(self, func_path: Path) -> Optional[ASTAnalysis]:
         """Analyze Python code using Abstract Syntax Tree."""
         source_folder = self._get_source_folder(func_path)
-        lambda_file = source_folder / "lambda_function.py"
-        if not lambda_file.exists():
+        
+        # Try to find the source file (lambda_function.py, index.py, or {foldername}.py)
+        python_file = None
+        for candidate in ['lambda_function.py', 'index.py', f'{source_folder.name}.py']:
+            candidate_path = source_folder / candidate
+            if candidate_path.exists():
+                python_file = candidate_path
+                break
+        
+        if not python_file:
             return None
         
         try:
-            with open(lambda_file, 'r') as f:
+            with open(python_file, 'r') as f:
                 code = f.read()
             
             tree = ast.parse(code)
@@ -234,7 +253,7 @@ class ASTComparator:
                 variables_defined=sorted(list(set(variables_defined)))
             )
         except (SyntaxError, OSError) as e:
-            print(f"[!] Error analyzing {lambda_file}: {e}")
+            print(f"[!] Error analyzing {python_file}: {e}")
             return None
 
     def _compare_ast_analysis(self, ast1: Optional[ASTAnalysis], ast2: Optional[ASTAnalysis]) -> Dict[str, Any]:
