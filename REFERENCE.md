@@ -51,6 +51,7 @@ make <command>
 |---------|-------------|
 | `compare` | Compare two Lambda functions (usage: `run.bat compare func1 func2`) |
 | `compare-config` | Compare multiple function pairs from comparison.config.yaml |
+| `file-report` | Generate Excel file/line-count report from functions.config.yaml |
 
 ### Maintenance
 | Command | Description |
@@ -123,6 +124,9 @@ python check_runtime_versions.py
 python compare_lambda_functions.py func1 func2
 python compare_lambda_functions.py comparison.config.yaml
 python compare_lambda_functions.py func1 func2 --no-pdf
+
+# Generate file/line Excel report
+python generate_function_file_report.py
 ```
 
 ### Terraform Commands

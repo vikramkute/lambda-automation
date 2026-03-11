@@ -113,6 +113,7 @@ function Show-Help {
     Write-Host "  compare-config         Compare functions from comparison.config.yaml"
     Write-Host "  compare-ast [f1] [f2]  Compare functions at AST level (Application Test Suite)"
     Write-Host "  compare-ast-config     AST compare from comparison.config.yaml"
+    Write-Host "  file-report            Generate Excel file/line-count report from functions.config.yaml"
     Write-Host "  test                   Run full test suite with SAM"
     Write-Host "  test-fast              Run fast test suite (no SAM build)"
     Write-Host "  init-terraform         Initialize Terraform"
@@ -318,6 +319,24 @@ function Cmd-Report {
     # Open in default browser (works without a server since all data is inline)
     $absolutePath = (Resolve-Path $outputFile).Path
     Start-Process $absolutePath
+}
+
+# Cmd-FileReport: Generate Excel report of file and line counts per function
+function Cmd-FileReport {
+    Write-ColorOutput "Generating function file/line Excel report..." "Blue"
+
+    if (-not (Test-Path "generate_function_file_report.py")) {
+        Write-ColorOutput "ERROR: generate_function_file_report.py not found!" "Red"
+        exit 1
+    }
+
+    & $PYTHON generate_function_file_report.py
+    if ($LASTEXITCODE -ne 0) {
+        Write-ColorOutput "File report generation failed!" "Red"
+        exit 1
+    }
+
+    Write-ColorOutput "[OK] File report generated: function_file_report.xlsx" "Green"
 }
 
 # Cmd-InitTerraform: Initialize Terraform
@@ -576,6 +595,7 @@ switch ($Command.ToLower()) {
     "compare-config" { Cmd-CompareConfig }
     "compare-ast" { Cmd-CompareAst $FunctionList $Function2 }
     "compare-ast-config" { Cmd-CompareAstConfig }
+    "file-report" { Cmd-FileReport }
     "test" { Cmd-Test }
     "test-fast" { Cmd-TestFast }
     "report" { Cmd-Report }

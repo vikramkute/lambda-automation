@@ -75,6 +75,9 @@ make upgrade                  # or: run.bat upgrade
 
 # Build all functions
 make build                    # or: run.bat build
+
+# Generate Excel file/line report
+python generate_function_file_report.py   # or: run.bat file-report
 ```
 
 ### Deployment
@@ -177,6 +180,7 @@ make deploy             # Deploy
 | `deploy_lambda_functions.py` | Complete deployment pipeline |
 | `check_runtime_versions.py` | Check runtime versions |
 | `compare_lambda_functions.py` | Compare Lambda functions side-by-side |
+| `generate_function_file_report.py` | Generate Excel file/line-count report |
 | `tests/test_lambda_functions.py` | Test suite |
 | `terraform.tf` | Terraform setup |
 | `terraform_lambda.tf` | Lambda infrastructure |

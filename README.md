@@ -128,6 +128,7 @@ build:
 | Test Full | `run.bat test` | `make test` | Full test suite |
 | Compare | `run.bat compare func1 func2` | `make compare FUNC1=func1 FUNC2=func2` | Compare two functions |
 | Compare Config | `run.bat compare-config` | `make compare-config` | Compare from config file |
+| File Report | `run.bat file-report` | `python generate_function_file_report.py` | Generate Excel file/line-count report |
 | Init Terraform | `run.bat init-terraform` | `make init-terraform` | Initialize Terraform |
 | Terraform Output | `run.bat terraform-output` | `make terraform-output` | Show Terraform outputs |
 | Plan | `run.bat plan-deploy` | `make plan-deploy` | Generate tfvars.json and plan Terraform changes |
