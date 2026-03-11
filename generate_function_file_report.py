@@ -18,12 +18,14 @@ class FileRecord:
     function_enabled: bool
     function_path: str
     src_path: str
+    file_name: str
     relative_file_path: str
     absolute_file_path: str
     lines: int
 
 
 EXCLUDED_DIRS = {".git", ".venv", "venv", "__pycache__", ".terraform", "htmlcov", ".build", ".packages"}
+EXCLUDED_FILE_NAMES = {"requirements.txt"}
 
 
 def load_config(config_path: Path) -> dict[str, Any]:
@@ -114,19 +116,24 @@ def collect_records(
 
         total_files = 0
         total_lines = 0
+        file_names: list[str] = []
         missing_src = not src_path.exists()
 
         if not missing_src:
             for file_path in sorted(p for p in src_path.rglob("*") if p.is_file()):
+                if file_path.name.lower() in EXCLUDED_FILE_NAMES:
+                    continue
                 lines = count_file_lines(file_path)
                 total_files += 1
                 total_lines += lines
+                file_names.append(file_path.name)
                 file_rows.append(
                     FileRecord(
                         function_name=name,
                         function_enabled=enabled,
                         function_path=function_path,
                         src_path=str(src_path),
+                        file_name=file_path.name,
                         relative_file_path=str(file_path.relative_to(src_path)),
                         absolute_file_path=str(file_path),
                         lines=lines,
@@ -142,6 +149,7 @@ def collect_records(
                 "src_resolution": resolution,
                 "total_files": total_files,
                 "total_lines": total_lines,
+                "file_names": ", ".join(sorted(set(file_names))),
                 "src_exists": not missing_src,
             }
         )
@@ -164,6 +172,7 @@ def write_excel_report(output_path: Path, summary_rows: list[dict[str, Any]], fi
             "Source Exists",
             "Total Files",
             "Total Lines",
+            "File Names",
         ]
     )
     for row in summary_rows:
@@ -177,6 +186,7 @@ def write_excel_report(output_path: Path, summary_rows: list[dict[str, Any]], fi
                 row["src_exists"],
                 row["total_files"],
                 row["total_lines"],
+                row["file_names"],
             ]
         )
 
@@ -187,6 +197,7 @@ def write_excel_report(output_path: Path, summary_rows: list[dict[str, Any]], fi
             "Enabled",
             "Function Path",
             "Source Path",
+            "File Name",
             "Relative File Path",
             "Absolute File Path",
             "Line Count",
@@ -199,6 +210,7 @@ def write_excel_report(output_path: Path, summary_rows: list[dict[str, Any]], fi
                 row.function_enabled,
                 row.function_path,
                 row.src_path,
+                row.file_name,
                 row.relative_file_path,
                 row.absolute_file_path,
                 row.lines,
