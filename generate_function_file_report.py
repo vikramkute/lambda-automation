@@ -27,10 +27,28 @@ class FileRecord:
 EXCLUDED_DIRS = {".git", ".venv", "venv", "__pycache__", ".terraform", "htmlcov", ".build", ".packages"}
 EXCLUDED_FILE_NAMES = {"requirements.txt"}
 
+# LOC thresholds (based on total lines across counted source files per function)
+VERY_SIMPLE_MAX_LINES = 100
+SIMPLE_MAX_LINES = 300
+MEDIUM_MAX_LINES = 700
+COMPLEX_MAX_LINES = 1500
+
 
 def is_under_excluded_dir(path: Path) -> bool:
     excluded = {name.lower() for name in EXCLUDED_DIRS}
     return any(part.lower() in excluded for part in path.parts)
+
+
+def categorize_function_by_lines(total_lines: int) -> str:
+    if total_lines <= VERY_SIMPLE_MAX_LINES:
+        return "Very Simple"
+    if total_lines <= SIMPLE_MAX_LINES:
+        return "Simple"
+    if total_lines <= MEDIUM_MAX_LINES:
+        return "Medium"
+    if total_lines <= COMPLEX_MAX_LINES:
+        return "Complex"
+    return "Very Complex"
 
 
 def load_config(config_path: Path) -> dict[str, Any]:
@@ -156,6 +174,7 @@ def collect_records(
                 "src_resolution": resolution,
                 "total_files": total_files,
                 "total_lines": total_lines,
+                "complexity_category": categorize_function_by_lines(total_lines),
                 "file_names": ", ".join(sorted(set(file_names))),
                 "src_exists": not missing_src,
             }
@@ -179,6 +198,7 @@ def write_excel_report(output_path: Path, summary_rows: list[dict[str, Any]], fi
             "Source Exists",
             "Total Files",
             "Total Lines",
+            "Complexity Category",
             "File Names",
         ]
     )
@@ -193,6 +213,7 @@ def write_excel_report(output_path: Path, summary_rows: list[dict[str, Any]], fi
                 row["src_exists"],
                 row["total_files"],
                 row["total_lines"],
+                row["complexity_category"],
                 row["file_names"],
             ]
         )
