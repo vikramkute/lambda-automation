@@ -28,6 +28,11 @@ EXCLUDED_DIRS = {".git", ".venv", "venv", "__pycache__", ".terraform", "htmlcov"
 EXCLUDED_FILE_NAMES = {"requirements.txt"}
 
 
+def is_under_excluded_dir(path: Path) -> bool:
+    excluded = {name.lower() for name in EXCLUDED_DIRS}
+    return any(part.lower() in excluded for part in path.parts)
+
+
 def load_config(config_path: Path) -> dict[str, Any]:
     with config_path.open("r", encoding="utf-8") as file:
         return yaml.safe_load(file) or {}
@@ -79,7 +84,7 @@ def resolve_src_path(workspace_root: Path, function_config: dict[str, Any]) -> t
         for candidate in workspace_root.rglob(function_name):
             if not candidate.is_dir():
                 continue
-            if any(part in EXCLUDED_DIRS for part in candidate.parts):
+            if is_under_excluded_dir(candidate):
                 continue
             detected = find_source_under_base(candidate, preferred_src_folder)
             if detected:
@@ -121,6 +126,8 @@ def collect_records(
 
         if not missing_src:
             for file_path in sorted(p for p in src_path.rglob("*") if p.is_file()):
+                if is_under_excluded_dir(file_path):
+                    continue
                 if file_path.name.lower() in EXCLUDED_FILE_NAMES:
                     continue
                 lines = count_file_lines(file_path)
